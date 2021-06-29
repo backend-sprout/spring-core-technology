@@ -35,8 +35,13 @@
 * `BeanFactory`를 상속받고 있다. (인터페이스 상속, `HierarchicalBeanFactory`)       
 * 컨테이너식으로 동작하며 `트랜잭션 관리`나 `리소스 로딩 기능` 그리고 `메시지 기반의 다국어 처리` 등 다양한 기능을 지원한다.    
 * 대부분 스프링 프로젝트는 `ApplicationContext` 유형의 스프링 컨테이너를 이용한다.          
-       
+* `BeanFactory`, `ApplicationEventPublisher`, `EnvironmentCapable`,   `HierarchicalBeanFactory`, `ListableBeanFactory`,   
+  `MessageSource`, `ResourceLoader`, `ResourcePatternResolver`등의 인터페이스를 구현하고 있다.   
+   
 `BeanFactory` 같은 경우, 빈을 관리하는 기본적인 역할만 수행하기에        
 우리가 스프링에서 사용하는 컨테이너는 대부분 `ApplicationContext`를 상속받은 구현체들이다.   
- 
- 
+      
+* ClassPathXmlApplicationContext (XML)
+* AnnotationConfigApplicationContext (Java)
+
+
