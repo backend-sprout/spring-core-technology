@@ -18,7 +18,7 @@
 * **객체와 객체 사이의 의존관계 역시 컨테이너가 처리한다.**        
 * 결과적으로 **소스에 `의존 관계`가 명시되지 않으므로 결합도가 떨어져서 유지보수가 편리해진다.**      
    
-## IoC 컨테이너와 빈      
+# IoC 컨테이너와 빈      
 `Spring framework` 에서 말하는 `IoC`는 `DI`와 동일하다고 말한다.(Spring 레퍼런스에서 직접 언급)        
 즉, **어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 주입 받아 사용하는 방법을 말한다.**   
   
@@ -43,5 +43,7 @@
       
 * ClassPathXmlApplicationContext (XML)
 * AnnotationConfigApplicationContext (Java)
-
-
+   
+# ApplicationContext 와 다양한 빈 설정 방법   
+# Autowired 
+[https://howtodoinjava.com/spring-core/spring-bean-life-cycle/](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
