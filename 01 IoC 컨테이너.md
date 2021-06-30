@@ -43,8 +43,30 @@
       
 * ClassPathXmlApplicationContext (XML)
 * AnnotationConfigApplicationContext (Java)
+      
+**`BeanFactory`와 라이프 사이클**
 
-# 빈팩토리와 라이프사이클
+1. BeanNameAware's setBeanName
+2. BeanClassLoaderAware's setBeanClassLoader
+3. BeanFactoryAware's setBeanFactory
+4. EnvironmentAware's setEnvironment
+5. EmbeddedValueResolverAware's setEmbeddedValueResolver
+6. ResourceLoaderAware's setResourceLoader (only applicable when running in an application context)
+7. ApplicationEventPublisherAware's setApplicationEventPublisher (only applicable when running in an application context)
+8. MessageSourceAware's setMessageSource (only applicable when running in an application context)
+9. ApplicationContextAware's setApplicationContext (only applicable when running in an application context)
+10. ServletContextAware's setServletContext (only applicable when running in a web application context)
+11. postProcessBeforeInitialization methods of BeanPostProcessors
+12. InitializingBean's afterPropertiesSet
+13. a custom init-method definition
+14. postProcessAfterInitialization methods of BeanPostProcessors
+   
+Bean 팩토리 종료시 다음 라이프 사이클 메소드가 적용됩니다.  
+1. postProcessBeforeDestruction DestructionAwareBeanPostProcessors의 메소드
+2. DisposableBean의 destroy
+3. 사용자 지정 삭제 메서드 정의
+
+
 [빈팩토리와 라이프사이클](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
 
 # 📕 ApplicationContext 와 다양한 빈 설정 방법   
