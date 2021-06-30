@@ -62,8 +62,6 @@
      
 [빈팩토리와 라이프사이클](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
 
-
-  
-# 📕 ApplicationContext 와 다양한 빈 설정 방법   
 # 📒 @Autowired 
+
 [https://howtodoinjava.com/spring-core/spring-bean-life-cycle/](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
