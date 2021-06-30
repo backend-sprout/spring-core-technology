@@ -67,6 +67,12 @@
 
 `BeanPostProcessor`는 빈을 만든 다음에, 빈의 초기화 과정 전후로 부가적인 작업을 할 수 있게 해주는 또다른 라이프 사이클 콜백이다.   
 즉, 처음 빈이 만들어지고 init 메서드를 실행하기 전후로 콜백을 실행해서 의존 관계를 맺는것이다.      
+ 
+ApplicationContext의 빈팩토리가, `BeanPostProcessor`를 찾는다.      
+등록된 빈들 중에는 `AutoWiredAnnotationBeanPost`를 찾게 될 것이다.      
+다른 일반적인 빈들에게 `AutoWiredAnnotationBeanPost`를 적용하는 것이다.   
+
+
 
 
 
