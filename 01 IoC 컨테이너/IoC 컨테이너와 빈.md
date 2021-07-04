@@ -97,7 +97,7 @@ public @interface Configuration {
 * 새로운 형식의 설정 정보가 추가되면, `XxxBeanDefinitionReader`를 만들어서 `BeanDefinition`을 생성하면 된다.  
 
 
-## BeanDefinition 살펴보기 
+### BeanDefinition 속성과 예시  
 * **BeanClassName:** 생성할 빈의 클래스 명(자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)
 * **factoryBeanName:** 팩토리 역할의 빈을 사용할 경우 이름, 예) appConfig
 * **factoryMethodName:** 빈을 생성할 팩토리 메서드 지정, 예) memberService
@@ -106,6 +106,34 @@ public @interface Configuration {
 * **InitMethodName:** 빈을 생성하고, 의존관계를 적용한 뒤에 호출되는 초기화 메서드 명    
 * **DestroyMethodName:** 빈의 생명주기가 끝나서 제거하기 직전에 호출되는 메서드 명    
 * **Constructor arguments, Properties:** 의존관계 주입에서 사용한다. (자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)     
+
+**Bean 어노테이션 내부**
+```java
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Bean {
+
+	@AliasFor("name")
+	String[] value() default {};
+
+	@AliasFor("value")
+	String[] name() default {};
+  
+	@Deprecated
+	Autowire autowire() default Autowire.NO;
+  
+	boolean autowireCandidate() default true;
+	String initMethod() default "";
+	String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
+}
+```
+```java
+
+```
+
+
+
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
