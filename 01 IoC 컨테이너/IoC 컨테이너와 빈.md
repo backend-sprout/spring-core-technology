@@ -73,30 +73,29 @@ public @interface Configuration {
         
 ## 📖 빈 정의(스프링 빈 설정 메타 정보 - BeanDefinition)      
 **스프링은 `BeanDefinition`을 통해 XML, JAVA와 같은 다양한 설정 형식을 지원한다.**      
-         
+
 ![image](../images/8.PNG)     
-   
+
+
 **`BeanDefinition`을 빈 메타 정보라고 말한다.**         
 * **`@Bean`, `<bean>`당 각각 하나씩 메타 정보가 생성된다.**         
 * `XML`을 읽어서 `BeanDefinition`구현체를 만들면 된다.   
 * 자바 코드를 읽어서 `BeanDefinition`구현체를 만들면 된다.   
 * 스프링 컨테이너는 이 메타 정보를 기반으로 스프링 빈을 생성한다.         
     * **스프링 컨테이너는 자바 코드인지, XML인지 몰라도 오로지 `BeanDefinition`구현체만 알면 된다.**      
-                       
-### 📄 BeanDefinition   
-     
+
 |Property|Explained in…|
 |---|---|
 |Class|Instantiating Beans|
 |Name|Naming Beans|
 |Scope|Bean Scopes|
 |Constructor arguments|Dependency Injection|
-|Properties|Dependency Injection|
-|Autowiring mode|Autowiring Collaborators|
-|Lazy initialization mode|Lazy-initialized Beans|
-|Initialization method|Initialization Callbacks|
-|Destruction method|Destruction Callbacks|
-
+|Properties|Dependency Injection|   
+|Autowiring mode|Autowiring Collaborators|  
+|Lazy initialization mode|Lazy-initialized Beans|  
+|Initialization method|Initialization Callbacks|   
+|Destruction method|Destruction Callbacks|      
+     
 * **BeanClassName:** 생성할 빈의 클래스 명(자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)
 * **factoryBeanName:** 팩토리 역할의 빈을 사용할 경우 이름, 예) appConfig
 * **factoryMethodName:** 빈을 생성할 팩토리 메서드 지정, 예) memberService
@@ -109,11 +108,9 @@ public @interface Configuration {
 `빈 설정`은 이름 그대로 **빈을 어떠한 설정을 가지고 만들것이냐**에 대한 명세이다.          
 그러니 너무 어렵게 생각하지 말고 **빈 설정**이라고만 이해를 하자      
    
-그렇다면, `자바`와 `XML`에서 빈을 생성할 때 어떻게 definition 값을 주는지 않아보자    
-
-#### XML 기반
-
-
+그렇다면, `자바`와 `XML`에서 빈을 생성할 때 어떻게 설정 값을 주는지 않아보자    
+   
+### 📄 XML 기반
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -141,8 +138,8 @@ public @interface Configuration {
 </beans>
 ```
 `<bean> 태그`의 프로퍼티 값으로 `알맞는 definition 과 값`을 넣어주면 된다.     
-
-#### 
+   
+### 📄 자바 기반  
 **Bean 어노테이션 내부**
 ```java
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
@@ -164,15 +161,14 @@ public @interface Bean {
 	String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
 }
 ```
+어노테이션 내부는 위와 같다.   
+어노테이션 메서드처럼 정의하는 부분이 바로 프로퍼티(속성)을 정의하는 부분이다.  
+이를 실제 코드를 보면 아래와 같다.  
+
 ```java
-public class Foo {
+class Foo {
     public void init() {
         // initialization logic
-    }
-}
-public class Bar {
-    public void cleanup() {
-        // destruction logic
     }
 }
 @Configuration
@@ -181,17 +177,10 @@ public class AppConfig {
     public Foo foo() {
         return new Foo();
     }
-    @Bean(destroyMethodName="cleanup")
-    public Bar bar() {
-        return new Bar();
-    }
 }
 ```
 
-
-
-
-### BeanDefinitionReader
+### 📄 BeanDefinitionReader
 `BeanDefinition` 인터페이스를 구현한 클래스들은        
 `BeanDefinitionReader`인터페이스를 구현한 구현체를 의존하고 있다.                    
 
