@@ -72,9 +72,16 @@ public class AppConfig {
 * 등등..  
 
 ```java
-@Service
-public class SampleService {
-    ... // 생략 
+@Component
+public @interface Controller {
+}
+
+@Component
+public @interface Service {
+}
+
+@Component
+public @interface Configuration {
 }
 ```
    
