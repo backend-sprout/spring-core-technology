@@ -12,9 +12,7 @@ IoC 컨테이너와 빈
 **✔빈 설정 소스**로 부터 **✔빈 정의**를 읽어들이고, 빈을 구성하고 제공한다.           
                   
 ## 📖 스프링 IoC(DI) 컨테이너 상세              
-Spring은 '스프링 설정 및 '애플리케이션 구현'과 관련된 `빈(Bean)`들을 `Spring Container`에 저장한다.           
-(`Spring Container` 는 'Servlet 컨테이너'와 비슷하다.)     
-           
+Spring은 '스프링 설정 및 '애플리케이션 구현'과 관련된 `빈(Bean)`들을 `Spring Container`에 저장한다.                      
 그리고 이러한 `Spring Container`의 종류는 크게 2가지가 있다.    
        
 1. BeanFactory    
