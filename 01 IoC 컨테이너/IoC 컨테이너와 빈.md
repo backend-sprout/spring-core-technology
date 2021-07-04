@@ -12,7 +12,7 @@ IoC 컨테이너와 빈
 **✔빈 설정 소스**로 부터 **✔빈 정의**를 읽어들이고, 빈을 구성하고 제공한다.           
   
 ## 📖 빈 설정 소스
-### XML 기반
+### 📄 XML 기반
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -34,7 +34,7 @@ IoC 컨테이너와 빈
 </beans>
 ```
 
-### 자바 @Configuration 기반  
+### 📄 자바 @Configuration 기반  
 ```java
 @Configuration // 1. AppConfig를 빈 등록한다. 
 public class AppConfig {
@@ -46,7 +46,7 @@ public class AppConfig {
     }
 ```   
 
-### 자바 @Component 기반
+### 📄 자바 @Component 기반
 * @Controller
 * @RestController
 * @Service
@@ -83,7 +83,7 @@ public @interface Configuration {
 * 스프링 컨테이너는 이 메타 정보를 기반으로 스프링 빈을 생성한다.         
     * **스프링 컨테이너는 자바 코드인지, XML인지 몰라도 오로지 `BeanDefinition`구현체만 알면 된다.**      
                        
-### BeanDefinition   
+### 📄 BeanDefinition   
      
 |Property|Explained in…|
 |---|---|
@@ -105,7 +105,44 @@ public @interface Configuration {
 * **InitMethodName:** 빈을 생성하고, 의존관계를 적용한 뒤에 호출되는 초기화 메서드 명    
 * **DestroyMethodName:** 빈의 생명주기가 끝나서 제거하기 직전에 호출되는 메서드 명    
 * **Constructor arguments, Properties:** 의존관계 주입에서 사용한다. (자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)     
+  
+`빈 설정`은 이름 그대로 **빈을 어떠한 설정을 가지고 만들것이냐**에 대한 명세이다.          
+그러니 너무 어렵게 생각하지 말고 **빈 설정**이라고만 이해를 하자      
+   
+그렇다면, `자바`와 `XML`에서 빈을 생성할 때 어떻게 definition 값을 주는지 않아보자    
 
+#### XML 기반
+
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+   <!-- A simple bean definition -->
+   <bean id="..." class="...">
+   </bean>
+
+   <!-- A bean definition with lazy init set on -->
+   <bean id="..." class="..." lazy-init="true">
+   </bean>
+
+   <!-- A bean definition with initialization method -->
+   <bean id="..." class="..." init-method="...">
+   </bean>
+
+   <!-- A bean definition with destruction method -->
+   <bean id="..." class="..." destroy-method="...">
+   </bean>
+
+</beans>
+```
+`<bean> 태그`의 프로퍼티 값으로 `알맞는 definition 과 값`을 넣어주면 된다.     
+
+#### 
 **Bean 어노테이션 내부**
 ```java
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
@@ -153,33 +190,6 @@ public class AppConfig {
 
 
 
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-   <!-- A simple bean definition -->
-   <bean id="..." class="...">
-   </bean>
-
-   <!-- A bean definition with lazy init set on -->
-   <bean id="..." class="..." lazy-init="true">
-   </bean>
-
-   <!-- A bean definition with initialization method -->
-   <bean id="..." class="..." init-method="...">
-   </bean>
-
-   <!-- A bean definition with destruction method -->
-   <bean id="..." class="..." destroy-method="...">
-   </bean>
-
-</beans>
-```
 
 ### BeanDefinitionReader
 `BeanDefinition` 인터페이스를 구현한 클래스들은        
