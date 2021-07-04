@@ -1,15 +1,16 @@
-# 📗 IoC 컨테이너와 빈      
+IoC 컨테이너와 빈      
+========================
+
 `Spring framework` 에서 말하는 `IoC`는 `DI`와 동일하다고 말한다.(Spring 레퍼런스에서 직접 언급)          
 즉, **어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 주입 받아 사용하는 방법을 말한다.**      
   
 스프링은 `스프링 설정`과 `애플리케이션 구현`과 관련된 `Bean`들을 `스프링 컨테이너`에 저장한다.       
 
-## 📖 스프링 IoC 컨테이너
+# 📗  스프링 IoC 컨테이너
 스프링 IoC 컨테이너는 **✔BeanFactory**를 기반으로 구현된 구현체이다.         
 애플리케이션 컴포넌트의 중앙 저장소의 역할을 맡고 있으며            
 **✔빈 설정 소스**로 부터 **✔빈 정의**를 읽어들이고, 빈을 구성하고 제공한다.           
-
-
+  
 ## 📖 빈 설정 소스
 ### XML 기반
 ```xml
@@ -70,7 +71,7 @@ public @interface Configuration {
 `@ComponentScan`이 `클래스 패스`를 기준으로 `@Component`이 붙은 클래스를 찾아 자동으로 빈 등록을한다.     
 참고로 이렇게, 내부에서 `어노테이션을 보조하는 어노테이션`을 **메타 어노테이션**이라고도한다.       
         
-## 빈 정의(스프링 빈 설정 메타 정보 - BeanDefinition)      
+## 📖 빈 정의(스프링 빈 설정 메타 정보 - BeanDefinition)      
 **스프링은 `BeanDefinition`을 통해 XML, JAVA와 같은 다양한 설정 형식을 지원한다.**      
          
 ![image](../images/8.PNG)     
@@ -83,6 +84,19 @@ public @interface Configuration {
     * **스프링 컨테이너는 자바 코드인지, XML인지 몰라도 오로지 `BeanDefinition`구현체만 알면 된다.**      
                        
 ### BeanDefinition   
+     
+|Property|Explained in…|
+|---|---|
+|Class|Instantiating Beans|
+|Name|Naming Beans|
+|Scope|Bean Scopes|
+|Constructor arguments|Dependency Injection|
+|Properties|Dependency Injection|
+|Autowiring mode|Autowiring Collaborators|
+|Lazy initialization mode|Lazy-initialized Beans|
+|Initialization method|Initialization Callbacks|
+|Destruction method|Destruction Callbacks|
+
 * **BeanClassName:** 생성할 빈의 클래스 명(자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)
 * **factoryBeanName:** 팩토리 역할의 빈을 사용할 경우 이름, 예) appConfig
 * **factoryMethodName:** 빈을 생성할 팩토리 메서드 지정, 예) memberService
@@ -229,18 +243,7 @@ BeanDefinition이라는 메타데이터를 만들고, 이를 통해 다시 객�
 **빈 설정**    
 * 빈 명세서  
 * 빈에 대한 정의를 담고 있다.     
-     
-|Property|Explained in…|
-|---|---|
-|Class|Instantiating Beans|
-|Name|Naming Beans|
-|Scope|Bean Scopes|
-|Constructor arguments|Dependency Injection|
-|Properties|Dependency Injection|
-|Autowiring mode|Autowiring Collaborators|
-|Lazy initialization mode|Lazy-initialized Beans|
-|Initialization method|Initialization Callbacks|
-|Destruction method|Destruction Callbacks|
+
      
 [빈팩토리와 라이프사이클](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
 
