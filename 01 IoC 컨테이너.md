@@ -23,46 +23,26 @@
 
     <bean id="memberRepository" class="hello.core.member.MemoryMemberRepository"/>
 
-    <bean id="orderService" class="hello.core.order.OrderServiceImpl">
-        <constructor-arg name="memberRepository" ref="memberRepository"/>
-        <constructor-arg name="discountPolicy" ref="discountPolicy"/>
+    <bean id="orderService" class="hello.core.order.OrderServiceImpl">    <!--빈 등록-->
+        <constructor-arg name="memberRepository" ref="memberRepository"/> <!--필요한 연관 빈 생성자 주입 받겠다고 선언-->
+        <constructor-arg name="discountPolicy" ref="discountPolicy"/>     <!--필요한 연관 빈 생성자 주입 받겠다고 선언-->
     </bean>
 
-    <bean id="discountPolicy" class="hello.core.discount.RateDiscountPolicy"/>
+    <bean id="discountPolicy" class="hello.core.discount.RateDiscountPolicy"/> 
 </beans>
 ```
 
-### 자바 @Configuration 기반
+### 자바 @Configuration 기반  
 ```java
-@Configuration
+@Configuration // 1. AppConfig를 빈 등록한다. 
 public class AppConfig {
 
-    @Bean
+    @Bean // 2. IoC Container에서 @Bean이 붙은 메서드를 찾아 호출하고 결과값을 빈으로 등록한다.  
     public MemberService memberService() {
         System.out.println("call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository());
     }
-
-    @Bean
-    public OrderService orderService() {
-        System.out.println("call AppConfig.orderService");
-        return new OrderServiceImpl(memberRepository(), discountPolicy());
-    }
-
-    @Bean
-    public MemberRepository memberRepository() {
-        System.out.println("call AppConfig.memberRepository");
-        return new MemoryMemberRepository();
-    }
-
-    @Bean
-    public DiscountPolicy discountPolicy() {
-        System.out.println("call AppConfig.discountPolicy");
-        return new RateDiscountPolicy();
-    }
-
-}
-```
+```   
 
 ### 자바 @Component 기반
 * @Controller
@@ -90,17 +70,7 @@ public @interface Configuration {
 사실, `@Configuration`도 `@Component`가 붙어있어 빈으로 등록되고,      
 빈은 실행할 수 있는 객체이기에 `@Bean`이 붙은 메서드를 호출하면서 반환된 값들을 빈 등록 했던 것이다.         
 참고로 이렇게, 내부에서 `어노테이션을 보조하는 어노테이션`을 **메타 어노테이션**이라고도한다.       
-     
-```java
-@Configuration // 1. AppConfig를 빈 등록한다. 
-public class AppConfig {
 
-    @Bean // 2. IoC Container에서 @Bean이 붙은 메서드를 찾아 호출하고 결과값을 빈으로 등록한다.  
-    public MemberService memberService() {
-        System.out.println("call AppConfig.memberService");
-        return new MemberServiceImpl(memberRepository());
-    }
-```   
    
 ### 빈 정의(스프링 빈 설정 메타 정보 - BeanDefinition)      
 **스프링은 어떻게 `XML`, `JAVA` 방식과 같은 다양한 설정 형식을 지원하는 것일까? 🤔**    
