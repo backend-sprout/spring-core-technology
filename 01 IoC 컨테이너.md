@@ -1,30 +1,96 @@
-# 📘 IoC 개요    
-`IoC(inversion of control)`란, 이름 그대로 `제어의 역전`을 의미한다.    
-             
-**객체를 생성하고 관리하는 `제어`를 역전시키는 것**으로              
-하나의 클래스에서 객체를 `생성`하고 `사용`하면서 관리하는 것이 아니라   
-`객체의 생성`은 외부에 맡기고 `객체의 사용`만을 관리하는 것이다.      
-그리고 외부에 맡긴다는 말은 **프레임워크에 빈을 생성하고 관리하는 것을 맡긴다는 것이다.**  
-             
-**`IoC`라는 개념이 도입되기 사용되기 전에는**           
-* 애플리케이션 수행에 필요한 **객체의 생성이나 객체와 객체 사이의 의존 관계를 개발자가 직접 처리했다.**       
-* 이런 상황에서 **의존 관계에 있는 객체를 변경할 때, 반드시 코드를 수정해야 한다는 문제가 발생했다.**           
-* 결과적으로 `SOLID 원칙`을 위배한 결합도 높은 코드를 작성하고 있었다.             
-    * `생성`과 `사용`이라는 2가지 책임이 있으므로 `SRP(단일 책임 원칙)` 위배     
-    * 기능의 확장이나 변경을 꾀한다면 코드를 수정해야하기에 `OCP(개방폐쇄원칙)` 위배
-
-**`IoC`가 적용되면서**
-* **객체 생성을 컨테이너(빈 컨테이너)가 대신 처리한다.**    
-* **객체와 객체 사이의 의존관계 역시 컨테이너가 처리한다.**        
-* 결과적으로 **소스에 `의존 관계`가 명시되지 않으므로 결합도가 떨어져서 유지보수가 편리해진다.**      
-   
 # 📗 IoC 컨테이너와 빈      
-`Spring framework` 에서 말하는 `IoC`는 `DI`와 동일하다고 말한다.(Spring 레퍼런스에서 직접 언급)        
-즉, **어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 주입 받아 사용하는 방법을 말한다.**   
+`Spring framework` 에서 말하는 `IoC`는 `DI`와 동일하다고 말한다.(Spring 레퍼런스에서 직접 언급)          
+즉, **어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 주입 받아 사용하는 방법을 말한다.**      
   
 스프링은 `스프링 설정`과 `애플리케이션 구현`과 관련된 `Bean`들을 `스프링 컨테이너`에 저장한다.       
+
+## 스프링 IoC 컨테이너
+스프링 IoC 컨테이너는 `BeanFactory`를 기반으로 구현된 구현체이다.   
+애플리케이션 컴포넌트의 중앙 저장소의 역할을 맡고 있으며   
+`빈 설정 소스`로 부터 `빈 정의`를 읽어들이고, 빈을 구성하고 제공한다.     
+
+### 빈 설정 소스 - XML 기반
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="memberService" class="hello.core.member.MemberServiceImpl">
+        <constructor-arg name="memberRepository" ref="memberRepository"/>
+    </bean>
+
+    <bean id="memberRepository" class="hello.core.member.MemoryMemberRepository"/>
+
+    <bean id="orderService" class="hello.core.order.OrderServiceImpl">
+        <constructor-arg name="memberRepository" ref="memberRepository"/>
+        <constructor-arg name="discountPolicy" ref="discountPolicy"/>
+    </bean>
+
+    <bean id="discountPolicy" class="hello.core.discount.RateDiscountPolicy"/>
+</beans>
+```
+
+### 빈 설정 소스 - 자바 @Configuration 기반
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public OrderService orderService() {
+        System.out.println("call AppConfig.orderService");
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        System.out.println("call AppConfig.memberRepository");
+        return new MemoryMemberRepository();
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {
+        System.out.println("call AppConfig.discountPolicy");
+        return new RateDiscountPolicy();
+    }
+
+}
+```
+
+### 빈 설정 소스 - 자바 @Component 기반
+* @Controller
+* @RestController
+* @Service
+* @Repository
+* @Bean
+* 등등..  
+   
+이게 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.      
+이렇듯 내부에서 `해당 어노테이션을 설명하는 어노테이션`을 **메타 어노테이션**이라고도한다.      
+
+
+
+
+
+빈
+● 스프링 IoC 컨테이너가 관리 하는 객체.
+● 장점
+○ 의존성 관리
+○ 스코프
+■ 싱글톤: 하나
+■ 프로포토타입: 매번 다른 객체
+○ 라이프사이클 인터페이스
+
+
 이러한, 스프링 컨테이너는 `Servlet 컨테이너`와 비슷하며 2가지 종류가 존재한다.        
-            
+
+
 **BeanFactory**   
 * 스프링 설정 파일에 등록된 `Bean`을 생성하고 관리하는 가장 기본적인 컨테이너 기능만 제공     
 * 처음부터 객체를 생성하지 않고,        
@@ -61,6 +127,9 @@
 |Destruction method|Destruction Callbacks|
      
 [빈팩토리와 라이프사이클](https://howtodoinjava.com/spring-core/spring-bean-life-cycle/)   
+
+# 📕 ApplicationContext 와 다양한 빈 설정 
+
 
 # 📒 @Autowired 
 빈 라이프 사이클에서 사용되는 `BeanPostProcessor` 인터페이스 구현체 AutoWiredAnnotationBeanPost 에 의해 가능한것이다.     
