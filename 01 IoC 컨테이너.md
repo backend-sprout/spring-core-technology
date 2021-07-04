@@ -80,9 +80,10 @@ public class SampleService {
    
 참고로 빈 등록이 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.         
 `@ComponentScan`이 `클래스 패스`를 기준으로 타고 내려오면서 `@Component`이 붙은 클래스를 자동으로 빈 등록을한다.     
-사실, `@Configuration`도 `@Component`가 붙어있어 빈으로 등록되고, 바로 메서드를 호출하면서 반환된 값들을 빈 등록 했던 것이다.   
-참고로 이렇게, 내부에서 `어노테이션을 보조하는 어노테이션`을 **메타 어노테이션**이라고도한다.     
-  
+사실, `@Configuration`도 `@Component`가 붙어있어 빈으로 등록되고,      
+빈은 실행할 수 있는 객체이기에 `@Bean`이 붙은 메서드를 호출하면서 반환된 값들을 빈 등록 했던 것이다.         
+참고로 이렇게, 내부에서 `어노테이션을 보조하는 어노테이션`을 **메타 어노테이션**이라고도한다.       
+     
 ```java
 @Configuration // 1. AppConfig를 빈 등록한다. 
 public class AppConfig {
@@ -102,14 +103,14 @@ public class AppConfig {
 * `XML`을 읽어서 `BeanDefinition`을 만들면 된다.   
 * 자바코드를 읽어서 `BeanDefinition`을 만들면 된다.   
 * 스프링 컨테이너는 자바 코드인지, XML인지 몰라도 오로지 `BeanDefinition`만 알면 된다.   
-             
+                
 **`BeanDefinition`을 빈 메타 정보라고 말한다.**         
-* `@Bean`, `<bean>`당 각각 하나씩 메타 정보가 생성된다.      
-* 스프링 컨테이너는 이 메타 정보를 기반으로 스프링 빈을 생성한다.      
- 
+* **`@Bean`, `<bean>`당 각각 하나씩 메타 정보가 생성된다.**         
+* 스프링 컨테이너는 이 메타 정보를 기반으로 스프링 빈을 생성한다.         
+    
 [사진]()    
 [사진]()    
-         
+           
 `BeanDefinition` 인터페이스를 구현한 클래스들은        
 `BeanDefinitionReader`인터페이스를 구현한 구현체를 의존하고 있다.        
         
