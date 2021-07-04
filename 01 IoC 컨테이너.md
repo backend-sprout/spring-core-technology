@@ -70,6 +70,13 @@ public class AppConfig {
 * @Service
 * @Repository
 * 등등..  
+
+```java
+@Service
+public class SampleService {
+    ... // 생략 
+}
+```
    
 이게 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.      
 이렇듯 내부에서 `해당 어노테이션을 설명하는 어노테이션`을 **메타 어노테이션**이라고도한다.      
