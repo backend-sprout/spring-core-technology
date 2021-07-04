@@ -129,7 +129,27 @@ public @interface Bean {
 }
 ```
 ```java
-
+public class Foo {
+    public void init() {
+        // initialization logic
+    }
+}
+public class Bar {
+    public void cleanup() {
+        // destruction logic
+    }
+}
+@Configuration
+public class AppConfig {
+    @Bean(initMethodName="init")
+    public Foo foo() {
+        return new Foo();
+    }
+    @Bean(destroyMethodName="cleanup")
+    public Bar bar() {
+        return new Bar();
+    }
+}
 ```
 
 
