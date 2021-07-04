@@ -107,53 +107,33 @@ public @interface Configuration {
 * **DestroyMethodName:** 빈의 생명주기가 끝나서 제거하기 직전에 호출되는 메서드 명    
 * **Constructor arguments, Properties:** 의존관계 주입에서 사용한다. (자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)     
 
-**코드로 확인해보기**
-```java
-package hello.core.beandefinition;
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 
-import hello.core.AppConfig;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-public class BeanDefinitionTest {
+   <!-- A simple bean definition -->
+   <bean id="..." class="...">
+   </bean>
 
-    AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
-    GenericXmlApplicationContext xmlApplicationContext = new GenericXmlApplicationContext("appConfig.xml");
+   <!-- A bean definition with lazy init set on -->
+   <bean id="..." class="..." lazy-init="true">
+   </bean>
 
-    @Test
-    @DisplayName("빈 설정 메타정보 확인")
-    void findAnnotationApplicationBean() {
-        String[] beanDefinitionNames = annotationConfigApplicationContext.getBeanDefinitionNames();
-        for (String beanDefinitionName : beanDefinitionNames) {
-            BeanDefinition beanDefinition = annotationConfigApplicationContext.getBeanDefinition(beanDefinitionName);
+   <!-- A bean definition with initialization method -->
+   <bean id="..." class="..." init-method="...">
+   </bean>
 
-            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
-                System.out.println("beanDefinitionName = " + beanDefinitionName +
-                        " beanDefinition = " + beanDefinition);
-            }
-        }
-    }
+   <!-- A bean definition with destruction method -->
+   <bean id="..." class="..." destroy-method="...">
+   </bean>
 
-    @Test
-    @DisplayName("빈 설정 메타정보 확인")
-    void findXmlApplicationBean() {
-        String[] beanDefinitionNames = xmlApplicationContext.getBeanDefinitionNames();
-        for (String beanDefinitionName : beanDefinitionNames) {
-            BeanDefinition beanDefinition = xmlApplicationContext.getBeanDefinition(beanDefinitionName);
-
-            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
-                System.out.println("beanDefinitionName = " + beanDefinitionName +
-                        " beanDefinition = " + beanDefinition);
-            }
-        }
-    }
-
-}
+</beans>
 ```
-   
+
 **정리**     
 * `BeanDefinition`을 직접 생성해서 스프링 컨테이너에 등록할 수 도 있다.         
   하지만 실무에서 `BeanDefinition`을 직접 정의하거나 사용할 일은 거의 없다.           
