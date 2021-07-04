@@ -9,8 +9,8 @@
 애플리케이션 컴포넌트의 중앙 저장소의 역할을 맡고 있으며            
 **✔빈 설정 소스**로 부터 **✔빈 정의**를 읽어들이고, 빈을 구성하고 제공한다.           
 
-### 빈 설정 소스
-#### XML 기반
+## 빈 설정 소스
+### XML 기반
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -32,7 +32,7 @@
 </beans>
 ```
 
-#### 자바 @Configuration 기반
+### 자바 @Configuration 기반
 ```java
 @Configuration
 public class AppConfig {
@@ -64,7 +64,7 @@ public class AppConfig {
 }
 ```
 
-#### 자바 @Component 기반
+### 자바 @Component 기반
 * @Controller
 * @RestController
 * @Service
@@ -78,8 +78,23 @@ public class SampleService {
 }
 ```
    
-이게 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.      
-이렇듯 내부에서 `해당 어노테이션을 설명하는 어노테이션`을 **메타 어노테이션**이라고도한다.      
+참고로 빈 등록이 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.         
+`@ComponentScan`이 `클래스 패스`를 기준으로 타고 내려오면서 `@Component`이 붙은 클래스를 자동으로 빈 등록을한다.     
+사실, `@Configuration`도 `@Component`가 붙어있어 빈으로 등록되고, 바로 메서드를 호출하면서 반환된 값들을 빈등록했던 것이다.   
+
+```java
+@Configuration // 1. AppConfig를 빈 등록한다. 
+public class AppConfig {
+
+    @Bean // 2. IoC Container에서 @Bean이 붙은 메서드를 찾아 호출하고 결과값을 빈으로 등록한다.  
+    public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
+        return new MemberServiceImpl(memberRepository());
+    }
+```
+
+참고로 이렇게, 내부에서 `어노테이션을 보조하는 어노테이션`을 **메타 어노테이션**이라고도한다.      
+   
    
 ### 빈 정의(스프링 빈 설정 메타 정보 - BeanDefinition)      
 **스프링은 어떻게 `XML`, `JAVA` 방식과 같은 다양한 설정 형식을 지원하는 것일까? 🤔**    
