@@ -81,23 +81,7 @@ public @interface Configuration {
 * 스프링 컨테이너는 이 메타 정보를 기반으로 스프링 빈을 생성한다.         
     * **스프링 컨테이너는 자바 코드인지, XML인지 몰라도 오로지 `BeanDefinition`구현체만 알면 된다.**      
                        
-### BeanDefinitionReader
-`BeanDefinition` 인터페이스를 구현한 클래스들은        
-`BeanDefinitionReader`인터페이스를 구현한 구현체를 의존하고 있다.                    
-
-![image](../images/9.PNG)          
-           
-`BeanDefinitionReader` 인터페이스는 설정파일(자바,xml,..등등)에서 정보를 읽는 역할을 한다.            
-즉, **설정파일을 기반으로 `BeanDefinition`을 생성하는 역할을 한다.(`Bean`의 메타정보 읽기)**        
-    
-* `AnnotationConfigApplicationContext`는 `AnnotatedBeanDefinitionReader`를 사용해서     
-  `AppConfig.class`를 읽고, `BeanDefinition`을 생성한다.      
-* `GenericXmlConfigApplicationContext`는 `XmlBeanDefinitionReader`를 사용해서     
-  `AppConfig.xml`을 읽고, `BeanDefinition`을 생성한다.       
-* 새로운 형식의 설정 정보가 추가되면, `XxxBeanDefinitionReader`를 만들어서 `BeanDefinition`을 생성하면 된다.  
-
-
-### BeanDefinition 속성과 예시  
+### BeanDefinition   
 * **BeanClassName:** 생성할 빈의 클래스 명(자바 설정 처럼 팩토리 역할의 빈을 사용하면 없음)
 * **factoryBeanName:** 팩토리 역할의 빈을 사용할 경우 이름, 예) appConfig
 * **factoryMethodName:** 빈을 생성할 팩토리 메서드 지정, 예) memberService
@@ -181,6 +165,23 @@ public class AppConfig {
 
 </beans>
 ```
+
+### BeanDefinitionReader
+`BeanDefinition` 인터페이스를 구현한 클래스들은        
+`BeanDefinitionReader`인터페이스를 구현한 구현체를 의존하고 있다.                    
+
+![image](../images/9.PNG)          
+           
+`BeanDefinitionReader` 인터페이스는 설정파일(자바,xml,..등등)에서 정보를 읽는 역할을 한다.            
+즉, **설정파일을 기반으로 `BeanDefinition`을 생성하는 역할을 한다.(`Bean`의 메타정보 읽기)**        
+    
+* `AnnotationConfigApplicationContext`는 `AnnotatedBeanDefinitionReader`를 사용해서     
+  `AppConfig.class`를 읽고, `BeanDefinition`을 생성한다.      
+* `GenericXmlConfigApplicationContext`는 `XmlBeanDefinitionReader`를 사용해서     
+  `AppConfig.xml`을 읽고, `BeanDefinition`을 생성한다.       
+* 새로운 형식의 설정 정보가 추가되면, `XxxBeanDefinitionReader`를 만들어서 `BeanDefinition`을 생성하면 된다.  
+
+
 
 **정리**     
 * `BeanDefinition`을 직접 생성해서 스프링 컨테이너에 등록할 수 도 있다.         
