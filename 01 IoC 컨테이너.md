@@ -9,7 +9,8 @@
 애플리케이션 컴포넌트의 중앙 저장소의 역할을 맡고 있으며            
 **✔빈 설정 소스**로 부터 **✔빈 정의**를 읽어들이고, 빈을 구성하고 제공한다.           
 
-### 빈 설정 소스 - XML 기반
+### ✔ 빈 설정 소스
+#### XML 기반
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -31,7 +32,7 @@
 </beans>
 ```
 
-### 빈 설정 소스 - 자바 @Configuration 기반
+#### 자바 @Configuration 기반
 ```java
 @Configuration
 public class AppConfig {
@@ -63,18 +64,17 @@ public class AppConfig {
 }
 ```
 
-### 빈 설정 소스 - 자바 @Component 기반
+#### 자바 @Component 기반
 * @Controller
 * @RestController
 * @Service
 * @Repository
-* @Bean
 * 등등..  
    
 이게 가능한 이유는 해당 어노테이션 내부에 `@Component` 어노테이션이 존재하기 때문이다.      
 이렇듯 내부에서 `해당 어노테이션을 설명하는 어노테이션`을 **메타 어노테이션**이라고도한다.      
 
-
+### 빈 정의  
 
 
 
