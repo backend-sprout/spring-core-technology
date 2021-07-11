@@ -39,7 +39,7 @@ public MessageSource messageSource() {
 즉, 어플리케이션 실행 도중에도 개발자가 `message.properties`에 있는 메시지 값을 다시 입력하면            
 캐시 시간이 지난 후 다시 reload 하여 서버의 종료 없이 변경사항을 적용할 수 시키는 것을 의미한다.            
      
-```
+```java
 @Bean
 public MessageSource messageSource() {
     var messageSource = new ReloadableResourceBundleMessageSource();
