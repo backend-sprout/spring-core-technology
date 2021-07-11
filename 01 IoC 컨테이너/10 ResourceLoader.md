@@ -11,10 +11,11 @@ public class AppRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Resource resource = resourceLoader.getResource("classpath:test.txt");   // resources/test.txt 파일을 읽는다.   
-        System.out.println(resource.exists());                                  // 리소스가 존재하는지 여부 반환   
-        System.out.println(resource.getDescription());                          // 리소스에 대한 내용 반환
-        System.out.println(resource.getURI().getPath());                        // 리소스에 대한 URI 경로 반환   
+        Resource resource = resourceLoader.getResource("classpath:test.txt");   // resources/test.txt 파일을 읽는다.     
+        System.out.println(resource.exists());                                  // 리소스가 존재하는지 여부 반환       
+        System.out.println(resource.getDescription());                          // 리소스에 대한 내용 반환        
+        System.out.println(Files.readString(Path.of(resource.getURI())));       // JDK11 리소스에 대한 URI 경로 반환     
+        System.out.println(resource.getURI().getPath());                        // JDK8 리소스에 대한 URI 경로 반환       
     }
 }
 ```
