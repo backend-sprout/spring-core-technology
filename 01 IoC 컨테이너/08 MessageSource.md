@@ -18,10 +18,27 @@ MessageSource
 * message_ko.properties : 한글 메시지.
 * messages_ko_kr.properties : 한글 국가 메시지(한글 메시지만 사용해도 충분하다.)     
 * message_en_UK.properties : 영국 메세지, 영국을 위해 `[언어]_[국가]`를 사용한다.      
-   
 
-리로딩 기능이 있는 메시지 소스 사용하기
-
+# ResourceBundleMessageSource   
+스프링 부트가 아닌 **일반 스프링에서는 AutoConfiguration 이 없으므로 직접 빈을 등록해야한다.**         
+`ResourceBundleMessageSource`는 `MessageSource`를 구현한 구현체로 일반적으로 사용된다.         
+     
+```java
+@Bean
+public MessageSource messageSource() {
+    var messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename("messages");
+    messageSource.setDefaultEncoding("UTF-8");
+ 
+    return messageSource;
+}
+```
+# ReloadableResourceBundleMessageSource    
+`ReloadableResourceBundleMessageSource`를 이용하면 리로딩 기능이 있는 메시지 소스 사용할 수 있다.            
+리로딩 기능이 있다는 것은 특정 시간마다 다시 `메시지 리소스(프로퍼티 값)`을 불러와 빈의 값을 세팅한다.                      
+즉, 어플리케이션 실행 도중에도 개발자가 `message.properties`에 있는 메시지 값을 다시 입력하면            
+캐시 시간이 지난 후 다시 reload 하여 서버의 종료 없이 변경사항을 적용할 수 시키는 것을 의미한다.            
+     
 ```
 @Bean
 public MessageSource messageSource() {
@@ -32,3 +49,4 @@ public MessageSource messageSource() {
     return messageSource;
 }
 ```
+
