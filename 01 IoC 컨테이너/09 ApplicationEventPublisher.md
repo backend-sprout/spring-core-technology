@@ -4,13 +4,14 @@ ApplicationEventPublisher
 옵저버 패턴 구현체로 이벤트 기반의 프로그래밍에 필요한 기능들을 제공해준다.   
   
 **이벤트 만들기**  
-* ApplicationEvent 상송  
-* 스프링 4.2 부터는 이 클래스를 상속받지 않아도 이벤트로 사용할 수 있다.   
-      
+* ApplicationEvent 상속  
+  * 이 과정에서 이벤트를 발생시킨 Object 소스를 `ApplicationEvent` 클래스 즉, 상위 생성자에 넣어야했다.       
+* 스프링 4.2 부터는 이 클래스를 상속받지 않아도 이벤트로 사용할 수 있다.       
+  * 이 말은 이전과 달리 이벤트 소스를 넣을 수 있고 안 넣을 수 있으며 상위 생성자에 안 넣어줘도 되는식으로 바뀌었다.     
+             
 **이벤트 발생 시키는 방법**       
 * ApplicationEventPublisher.publishEvent();           
 * `.publishEvent()`에 이벤트 객체를 넣는다. -> 이벤트 발생시킨다.       
-     
      
 **이벤트 처리하는 방법**   
 * `ApplicationListener<이벤트>` 구현한 `Handler 클래스`를 만들어서 빈으로 등록한다. -   
