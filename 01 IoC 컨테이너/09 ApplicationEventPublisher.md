@@ -6,14 +6,17 @@ ApplicationEventPublisher
 **이벤트 만들기**  
 * ApplicationEvent 상송  
 * 스프링 4.2 부터는 이 클래스를 상속받지 않아도 이벤트로 사용할 수 있다.   
-    
-**이벤트 발생 시키는 방법**     
-* ApplicationEventPublisher.publishEvent();   
-   
-**이벤트 처리하는 방법**  
-* `ApplicationListener<이벤트>` 구현한 클래스 만들어서 빈으로 등록한다.     
-* 스프링 4.2 부터는 `@EventListener`를 사용해서 빈의 메소드에 사용할 수 있다.     
-* 기본적으로는 synchronized.   
+      
+**이벤트 발생 시키는 방법**       
+* ApplicationEventPublisher.publishEvent();           
+* `.publishEvent()`에 이벤트 객체를 넣는다. -> 이벤트 발생시킨다.       
+     
+     
+**이벤트 처리하는 방법**   
+* `ApplicationListener<이벤트>` 구현한 `Handler 클래스`를 만들어서 빈으로 등록한다. -   
+    * 이 과정에서 `onApplicationEvent()`메서드를 오버라이딩해서 이벤트 발생시 실행할 동작을 구현한다.         
+* 스프링 4.2 부터는 `@EventListener`를 사용해서 빈의 메소드에 사용할 수 있다.       
+* 기본적으로는 synchronized.       
 * 순서를 정하고 싶다면 @Order와 함께 사용.  
 * 비동기적으로 실행하고 싶다면 @Async와 함께 사용.   
     
