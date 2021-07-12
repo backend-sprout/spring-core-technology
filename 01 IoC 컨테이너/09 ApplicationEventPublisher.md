@@ -17,15 +17,9 @@ ApplicationEventPublisher
 * 순서를 정하고 싶다면 @Order와 함께 사용.  
 * 비동기적으로 실행하고 싶다면 @Async와 함께 사용.   
     
-**스프링이 제공하는 기본 이벤트**      
-* ContextRefreshedEvent: ApplicationContext를 초기화 했더나 리프래시 했을 때 발생.  
-* ContextStartedEvent: ApplicationContext를 start()하여 라이프사이클 빈들이 시작    
-   
-**신호를 받은 시점에 발생.**     
-* ContextStoppedEvent: ApplicationContext를 stop()하여 라이프사이클 빈들이 정지    
-     
-**신호를 받은 시점에 발생.**     
-* ContextClosedEvent: ApplicationContext를 close()하여 싱글톤 빈 소멸되는 시점에     
-        
-**발생**      
-* RequestHandledEvent: HTTP 요청을 처리했을 때 발생.   
+**스프링이 제공하는 기본 이벤트**         
+* ContextRefreshedEvent: ApplicationContext를 초기화 했더나 리프래시 했을 때 발생.      
+* ContextStartedEvent: ApplicationContext를 start()하여 라이프사이클 빈들이 시작 신호를 받은 시점에 발생.     
+* ContextStoppedEvent: ApplicationContext를 stop()하여 라이프사이클 빈들이 정지 신호를 받은 시점에 발생.        
+* ContextClosedEvent: ApplicationContext를 close()하여 싱글톤 빈 소멸되는 시점에 발생     
+* RequestHandledEvent: HTTP 요청을 처리했을 때 발생.     
