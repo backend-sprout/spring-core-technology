@@ -89,7 +89,5 @@ Resource resource = resourceLoader.getResource("configuration.xml");
   * 접두어(+ classpath:)중 하나를 사용할 수 있다.
   * `classpath:me/whiteship/config.xml` -> `ClassPathResource`
   * `file:///some/resource/path/config.xml` -> `FileSystemResource`
-
-
-
-
+      
+개인적인 추천으로 접두어를 사용하는 것이 어떤 Resource를 사용해서 가져오는지 명확해서 추천한다.        
