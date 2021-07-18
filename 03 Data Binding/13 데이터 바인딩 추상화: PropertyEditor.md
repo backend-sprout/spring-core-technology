@@ -106,7 +106,14 @@ public class EventEditor extends PropertyEditorSupport {
            
 * **getAsText :** 애플리케이션에서 사용자로 보낼 때 매핑                
 * **setAsText :** 클라이언트 요청에서 애플리케이션으로 들어올 때 매핑             
-             
+  
+**DataEditor 특징**
+- Spring이 제공하는 DataBinder 인터페이스를 통해 사용됨
+- Spring 3 이전까지 DataBinder가 변환 작업에 사용한 인터페이스
+- 값(상태 정보)을 저장하고 있어 thread-safe하지 않음
+- 일반적인 싱글톤 scope 빈으로 등록해서 사용할 수 없음
+- Object - String간의 변환만 할 수 있어 사용 범위가 제한적
+
 스프링 3.0 이전까지 DataBinder가 변환 작업 사용하던 인터페이스  
 쓰레드-세이프 하지 않음 (상태 정보 저장 하고 있음, 따라서 싱글톤 빈으로 등록해서 쓰다가는...)   
 Object와 String 간의 변환만 할 수 있어, 사용 범위가 제한적 임. (그래도 그런 경우가 대부분이기 때문에 잘 사용해 왔음. 조심해서..)   
