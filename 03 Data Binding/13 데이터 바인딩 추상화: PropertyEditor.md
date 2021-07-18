@@ -20,10 +20,10 @@ Spring 을 사용하다보면 간혹 **마법 같은 일**이 일어난다.
 쉽게 말하자면, 사용자 요청 데이터는 대부분 `“문자열”`인데          
 그 값을 `int`, `long`, `Boolean`, `Date`와 같은 타입으로 변환은 물론     
 심지어 `Book`과 같은 사용자가 정의 객체로도 변환이 가능하다.      
-           
-이외에도 `xml 설정 파일`에 있던 문자열을 빈이 가지고 있는 적절한 타입으로 변환 및          
-SpEL에서 선언된 문자열을 숫자형으로 바꾸어 연산을 가능하도록 하고있다.        
-   
+             
+이외에도 **`xml 설정 파일`에 있던 문자열을 빈이 가지고 있는 적절한 타입으로 변환 및**             
+**`SpEL`에서 선언된 문자열을 숫자형으로 바꾸어 연산을 가능하도록 한다.**          
+     
 # PropertyEditor - 고전적인 데이터 바인딩  
 
 ```java
@@ -35,24 +35,48 @@ public class Event {
         this.id = id;
         this.title = title;
     }
+    
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public Integer getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "Event{" + "id=" + id + ", title='" + title + '\'' + '}';
     }
+    
+}
+```
+```java
+@RestController
+public class EventController {
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    @GetMapping("/event/{event}")
+    public String getEvent(@PathVariable Event event) {
+        logger.info(event.toString());
+        return event.getId().toString();
     }
 }
 ```
+```java
+@WebMvcTest
+class EventControllerTest {
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    void getTest() throws Exception {
+        mockMvc.perform(get("/event/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"));
+    }
+}
+```
+
+
 
 ● 스프링 3.0 이전까지 DataBinder가 변환 작업 사용하던 인터페이스
 ● 쓰레드-세이프 하지 않음 (상태 정보 저장 하고 있음, 따라서 싱글톤 빈으로 등록해서
