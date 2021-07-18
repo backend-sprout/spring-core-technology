@@ -112,17 +112,44 @@ public class EventEditor extends PropertyEditorSupport {
 그렇기에 **만약 싱글톤으로 선언을 하게 된다면 여러 스레드에서 `PropertyEditor`의 value를 수정할 것이다.**        
 빈으로 만들어 사용하려면 `스레드 스코프`로 활동 영역을 제한하여 사용하면 된다.       
 
+```java
+@RestController
+public class EventController {
 
+    private Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    
-**DataEditor 특징**
+    @InitBinder
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(Event.class, new EventEditor());
+    }
+
+    @GetMapping("/event/{event}")
+    public String getEvent(@PathVariable Event event) {
+        logger.info(event.toString());
+        return event.getId().toString();
+    }
+}
+```
+```shell
+2021-07-18 22:24:23.085  INFO 11312 --- [           main] com.example.core.EventController         : Event{id=1}
+```  
+아니면 `@InitBinder`를 통해 `WebDataBinder`객체를 의존 주입받고       
+`webDataBinder.registerCustomEditor()`를 이용하여 `editor 대상`과 `editor`를 등록한다.         
+하지만, 앞서 봤듯이 해당 작업을 하지 않더라도 동작은 하므로 크게 신경 쓸 필요는 없을 것 같다.       
+
+**@InitBinder란? 🤔**    
+
+      
+      
+**PropertyEditor 정리**
 - Spring이 제공하는 DataBinder 인터페이스를 통해 사용됨
 - Spring 3 이전까지 DataBinder가 변환 작업에 사용한 인터페이스
 - 값(상태 정보)을 저장하고 있어 thread-safe하지 않음
 - 일반적인 싱글톤 scope 빈으로 등록해서 사용할 수 없음
 - Object - String간의 변환만 할 수 있어 사용 범위가 제한적
+           
+PropertyEditor를 사용하기에는 신경쓸게 많고 제한적이기에      
+이러한 문제를 해결하고자 Spring 3에서는 Converter와 Formatter를 지원하기 시작했다.        
 
-스프링 3.0 이전까지 DataBinder가 변환 작업 사용하던 인터페이스  
-쓰레드-세이프 하지 않음 (상태 정보 저장 하고 있음, 따라서 싱글톤 빈으로 등록해서 쓰다가는...)   
-Object와 String 간의 변환만 할 수 있어, 사용 범위가 제한적 임. (그래도 그런 경우가 대부분이기 때문에 잘 사용해 왔음. 조심해서..)   
+
 
