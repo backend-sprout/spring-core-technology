@@ -3,7 +3,7 @@ Validation 추상화
 스프링 프레임워크에서 제공하는 Validation 추상화에 대해서 알아보고자 한다.           
 `org.springframework.validation.Validator`는 객체 검증용 인터페이스로          
 주로 `MVC 기반의 웹 계층`에서 사용되지만 `서비스`, `데이터`에서 사용해도 좋다.         
-(물론, javax 기반의 표준 validator가 존재하지만 스프링에서 사용하기에 스프링 validator가 낫다.)    
+(물론, javax 기반의 표준 validator가 존재하지만 스프링에서 사용하기에는 스프링 validator가 낫다.)    
          
 ```java
 package org.springframework.validation;
@@ -36,7 +36,7 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 
 * JSR-303(Bean Validation 1.0)   
 * JSR-349(Bean Validation 1.1)  
-* [JSR-380(Bean Validation 2.0)](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)    
+* [JSR-380(Bean Validation 2.0)](https://beanvalidation.org/)    
 
 여기서 언급된 자바 표준 Validation 은 아래와 같은 어노테이션을 지원한다.      
 `javax.validation.constraints`에 속하고 있다.      
@@ -87,3 +87,6 @@ ___
 ● LocalValidatorFactoryBean 빈으로 자동 등록
 ● JSR-380(Bean Validation 2.0.1) 구현체로 hibernate-validator 사용.
 ● https://beanvalidation.org/
+   
+# 참고 
+[자바 캔](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)
