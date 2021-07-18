@@ -91,10 +91,10 @@ class EventControllerTest {
           
 아무튼 백기선님 강의에서는 테스트 실패가 뜨는데 바인딩 작업을 따로 지정해주지 않았기 때문이다.                   
 필자는 이미 해결했지만, 동작 원리를 알기 위해서 `PropertyEditor`를 구현한 클래스를 만들어보자             
+        
+참고로, `PropertyEditor`는 단순한 인터페이스로 구현을 하기 위해서 많은 추상 메서드를 정의해줘야한다.      
+그렇기에 `PropertyEditor` 보다는 `PropertyEditorSupport`를 상속받는 형태로 작성해보자     
     
-참고로, `PropertyEditor`는 단순한 인터페이스로 구현을 하기 위해서 많은 추상 메서드를 정의해줘야한다.   
-그렇기에 `PropertyEditor` 보다는 `PropertyEditorSupport`를 상속받는 형태로 작성해보자   
-
 ```java
 
 ```
