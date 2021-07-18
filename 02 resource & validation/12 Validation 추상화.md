@@ -13,9 +13,15 @@ public interface Validator {
 	void validate(Object target, Errors errors);
 }
 ```
-           
-가장 큰 특징으로    
-`org.springframework.validation.Validator`를 구현한 `LocalValidatorFactoryBean` 클래스를 통해       
+`org.springframework.lang`와 연계하여 아래와 같은 어노테이션을 적용 및 지원해주고    
+   
+* NonNull
+* NonNullApi
+* NonNullFields
+* Nullable 
+
+
+가장 큰 특징으로 `org.springframework.validation.Validator`를 구현한 `LocalValidatorFactoryBean` 클래스를 통해       
 자바 표준 Validation인 `Bean Validation`을 지원하여 더욱 확장성 있는 기능을 제공한다.           
 
 ```java
@@ -32,8 +38,9 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 * JSR-349(Bean Validation 1.1)  
 * [JSR-380(Bean Validation 2.0)](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)    
 
-여기서 언급된 자바 표준 Validation 이란 아래와 같은 어노테이션을 지원한다.   
-
+여기서 언급된 자바 표준 Validation 은 아래와 같은 어노테이션을 지원한다.      
+`javax.validation.constraints`에 속하고 있다.      
+   
 |어노테이션|주요 속성|설명|지원 타입|
 |---------|--------|----|---------|
 |@AssertTrue<br>@AssertFalse||값이 true인지 또는 false인지 검사한다.<br>null은 유효하다고 판단한다.|boolean<br>Boolean|
