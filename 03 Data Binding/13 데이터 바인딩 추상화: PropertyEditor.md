@@ -30,22 +30,23 @@ Spring 을 사용하다보면 간혹 **마법 같은 일**이 일어난다.
 public class Event {
     private Integer id;
     private String title;
-
-    public Event(Integer id, String title) {
+    public Event(Integer id) {
         this.id = id;
-        this.title = title;
     }
-    
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
     @Override
     public String toString() {
-        return "Event{" + "id=" + id + ", title='" + title + '\'' + '}';
+        return "Event{" + "id=" + id + '}';
     }
-    
 }
 ```
 ```java
@@ -75,6 +76,33 @@ class EventControllerTest {
     }
 }
 ```
+단순히 위와 같이 코드를 작성할 경우 데이터 바인딩은 원활히 이루어지지 않을 것이다.     
+   
+**그런데...**  
+```shell
+2021-07-18 20:03:23.085  INFO 11312 --- [           main] com.example.core.EventController         : Event{id=1}
+```  
+스프링 버전이 올라가면서 바인딩 기능이 더 좋아진 것 같다.    
+매개변수 이름도 다르고 하지만, 
+아직 이유는 모르겠지만 
+
+
+
+왜냐하면 바인딩 작업을 따로 지정해주지 않았기 때문이다.         
+이를 해결하기 위해서 `PropertyEditor`를 구현한 클래스를 만들어보자    
+
+
+
+
+참고로, `PropertyEditor`는 단순한 인터페이스로 구현을 하기 위해서 많은 추상 메서드를 정의해줘야한다.   
+그렇기에 `PropertyEditor` 보다는 `PropertyEditorSupport`를 상속받는 형태로 작성해보자   
+
+```java
+
+```
+
+
+
 
 
 
