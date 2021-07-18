@@ -200,6 +200,8 @@ Empty userName is now allowed
 * `password`필드가 null이거나 비어있다면 errors에  `notEmtpy` 메시지 키를 넣는다.          
 * `password`필드가 6 미만의 길이를 가지고 있다면  `sizeMiss` 메시지 키를 넣는다.         
 * 간략히 `notEmtpy` 나 `sizeMiss`만 메시지키로 넣어도 관련 문자열을 생성해준다.      
+  
+스프링부트에는 `@Valid`를 이용해 검증을 바로 진행할 수 있다.       
    
 # 참고 
 [자바 캔](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)
