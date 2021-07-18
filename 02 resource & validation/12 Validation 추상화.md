@@ -30,12 +30,30 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 
 * JSR-303(Bean Validation 1.0)   
 * JSR-349(Bean Validation 1.1)  
-* JSR-380(Bean Validation 2.0)  
+* [JSR-380(Bean Validation 2.0)](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)    
 
+여기서 언급된 자바 표준 Validation 이란 아래와 같은 어노테이션을 지원한다.   
 
-
-
-
+|어노테이션|주요 속성|설명|지원 타입|
+|---------|--------|----|---------|
+|@AssertTrue<br>@AssertFalse||값이 true인지 또는 false인지 검사한다.<br>null은 유효하다고 판단한다.|boolean<br>Boolean|
+|@DecimalMax<br>@DecimalMin|String value<br>최댓값 또는 최솟값<br><br>boolean inclusive<br>지정값 포함 여부<br>기본 값 true|지정한 값보다 작거나 같은지<br>또는 크거나 같은지 검사한다.<br>inclusive가 false면<br>value로 지정한 값은 포함하지 않는다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>CharSequence<br>byte, short, int, long 및<br>각 래퍼 타입|
+|@Max<br>@Min|long value|지정한 값보다 작거나 같은지<br>또는 크거나 같은지 검사한다.<br>null은 유효하다고 판단한다.<br>|BigDecimal<br>BigInteger<br>byte, short, int, long 및<br> 관련 래퍼 타입|
+|@Digits|int integer<br>허용 가능한<br>정수 자릿수<br><br>int fraction<br>허용 가능한<br>소수점 이하 자릿수|자릿수가 지정한 크기를 넘지 않는지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>CharSequence<br>byte, short, int, long 및<br> 관련 래퍼 타입|
+|@Size|int min<br>최소 크기<br>기본 값 0<br><br>int max<br>최대 크기<br>기본 값|길이나 크기가 지정한 값 범위에 있는지 검사한다.<br>null은 유효하다고 판단한다|CharSequence<br>Collection<br>Map<br>배열|
+|@Null<br>@NotNull||값이 null인지 또는 null이 아닌지 검사한다.||
+|@Pattern|String regexp<br>정규표현식|값이 정규표현식에 일치하는지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence|
+|@NotEmpty (2)||문자열나 배열의 경우<br>null이 아니고 길이가 0이 아닌지 검사한다.<br><br>콜렉션의 경우<br>null이 아니고 크기가 0이 아닌지 검사한다.|CharSequence<br>Collection<br>Map<br>배열|
+|@NotBlank (2)||null이 아니고 최소한 한 개 이상의<br>공백이 아닌 문자를 포함하는지 검사한다.|CharSequence|
+|@Positive (2)<br>@PositiveOrZero (2)||양수인지 검사한다.<br>OrZero가 붙은 것은<br>0 또는 양수인지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>byte, short, int, long 및<br>관련 래퍼 타입|
+|@Negative (2)<br>@NegativeOrZero (2)||음수인지 검사한다.<br>OrZero가 붙은 것은<br>0 또는 음수인지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigIntegerbyte,<br> short, int, long 및<br>관련 래퍼 타입|
+|@Email (2)||이메일 주소가 유효한지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence| 
+|@Future (2)<br>@FutureOrPresent (2)||해당 시간이 미래 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 미래 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
+|@Past (2)<br>@PastOrPresent (2)||해당 시간이 과거 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 과거 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
+  
+  
+  
+**참고**
 
 ```gradle
 implementation 'org.springframework.boot:spring-boot-starter-validation'
