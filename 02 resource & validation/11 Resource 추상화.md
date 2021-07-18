@@ -43,6 +43,18 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 디폴트로 사용할 수 있는 `org.springframework.core.io.Resource`를 개발하여 리소스 자체를 추상화했다.        
 (리소스를 가져오는 기능은 이전 `ApplicationContext`를 활용하여 가져오는 방법들을 통해 학습했다.)           
 
+```java
+public interface Resource extends InputStreamSource {
+    boolean exists();
+    boolean isOpen();
+    URL getURL() throws IOException;
+    File getFile() throws IOException;
+    Resource createRelative(String relativePath) throws IOException;
+    String getFilename();
+    String getDescription();
+}
+```
+
 **특징**  
 * java.net.URL를 추상화    
 * 스프링 내부에서 많이 사용하는 인터페이스   
@@ -66,19 +78,6 @@ ApplicationContext applicationContext = new GenericXmlApplicationContext("config
 Resource resource = resourceLoader.getResource("configuration.xml"); 
 ```
 단, 이러한 **접두사 지원 Resource 구현체는 각각의 `ApplicationContext`의 구현체마다 다르다**는 점을 유의하자             
-    
-**Resource 인터페이스** 
-```java
-public interface Resource extends InputStreamSource {
-    boolean exists();
-    boolean isOpen();
-    URL getURL() throws IOException;
-    File getFile() throws IOException;
-    Resource createRelative(String relativePath) throws IOException;
-    String getFilename();
-    String getDescription();
-}
-```
 
 |Resource 구현체|기능|
 |---------------|---|
