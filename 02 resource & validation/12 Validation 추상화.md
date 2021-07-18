@@ -40,7 +40,36 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 
 여기서 언급된 자바 표준 Validation 은 아래와 같은 어노테이션을 지원한다.      
 `javax.validation.constraints`에 속하고 있다.      
-   
+
+```java
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.Email;
+
+public class User {
+
+    @NotNull(message = "Name cannot be null")
+    private String name;
+
+    @AssertTrue
+    private boolean working;
+
+    @Size(min = 10, max = 200, message = "About Me must be between 10 and 200 characters")
+    private String aboutMe;
+
+    @Min(value = 18, message = "Age should not be less than 18")
+    @Max(value = 150, message = "Age should not be greater than 150")
+    private int age;
+
+    @Email(message = "Email should be valid")
+    private String email;
+
+    // standard setters and getters 
+}
+```
 |어노테이션|주요 속성|설명|지원 타입|
 |---------|--------|----|---------|
 |@AssertTrue<br>@AssertFalse||값이 true인지 또는 false인지 검사한다.<br>null은 유효하다고 판단한다.|boolean<br>Boolean|
@@ -59,25 +88,14 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 |@Past (2)<br>@PastOrPresent (2)||해당 시간이 과거 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 과거 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
   
   
-  
 **참고**
-
 ```gradle
 implementation 'org.springframework.boot:spring-boot-starter-validation'
 ```
 스프링 부트에서는 위와 같이 의존성을 추가해주면 java 표준 Bean Validation 을 사용할 수 있다.   
-
-
-
-
-
-
-
-
-___  
-
-
-]
+     
+# 커스텀 Bean Validation     
+  
 인터페이스
 ● boolean supports(Class clazz): 어떤 타입의 객체를 검증할 때 사용할 것인지 결정함
 ● void validate(Object obj, Errors e): 실제 검증 로직을 이 안에서 구현
