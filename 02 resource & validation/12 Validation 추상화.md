@@ -19,12 +19,13 @@ public interface Validator {
 자바 표준 Validation인 `Bean Validation`을 지원하여 더욱 확장성 있는 기능을 제공한다.           
 
 ```java
-org.springframework.validation.Validator.Validator
-    ㄴorg.springframework.validation.SmartValidator
-       ㄴ
-         org.springframework.validation.beanvalidation.SpringValidatorAdapter <- ★LocalValidatorFactoryBean★
-       r
-javax.validation.Validator.Validator    
+org.springframework.validation.Validator.Validator    javax.validation.Validator.Validator
+  ▲                                                                    ▲
+  ㄴ  org.springframework.validation.SmartValidator                    |
+        ▲                                                              |     
+        ㄴ org.springframework.validation.beanvalidation.SpringValidatorAdapter 
+             ▲                                                                   
+             ㄴ  LocalValidatorFactoryBean
 ```
 
 * JSR-303(Bean Validation 1.0)   
