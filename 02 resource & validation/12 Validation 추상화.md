@@ -141,6 +141,8 @@ public class AppRunner implements ApplicationRunner {
     }
 }
 ```
+발생한 에러들을 
+
 ```java
  public class UserLoginValidator implements Validator {
 
@@ -151,8 +153,8 @@ public class AppRunner implements ApplicationRunner {
     }
 
     public void validate(Object target, Errors errors) {
-       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "field.required");
-       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field.required");
+       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "notempty", "Empty userName is now allowed");
+       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "notempty", "Empty password is now allowed");
        UserLogin login = (UserLogin) target;
        if (login.getPassword() != null
              && login.getPassword().trim().length() < MINIMUM_PASSWORD_LENGTH) {
