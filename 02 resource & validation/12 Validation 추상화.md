@@ -15,15 +15,16 @@ public interface Validator {
 ```
 `org.springframework.lang`와 연계하여 아래와 같은 어노테이션을 적용 및 지원해주고    
    
-* NonNull
-* NonNullApi
-* NonNullFields
-* Nullable 
-
+* @NonNull
+* @NonNullApi
+* @NonNullFields
+* @Nullable 
 
 가장 큰 특징으로 `org.springframework.validation.Validator`를 구현한 `LocalValidatorFactoryBean` 클래스를 통해       
-자바 표준 Validation인 `Bean Validation`을 지원하여 더욱 확장성 있는 기능을 제공한다.           
-
+자바 표준 Validation인 `Bean Validation`을 지원하여 더욱 확장성 있는 기능을 제공한다.                
+단, `springboot 2.3` 부터 validator 관련 의존성이 기본 의존성에서 빠졌기에      
+`'org.springframework.boot:spring-boot-starter-validation'`를 추가해주어야 한다.       
+    
 ```java
 org.springframework.validation.Validator.Validator    javax.validation.Validator.Validator
   ▲                                                                    ▲
@@ -37,6 +38,7 @@ org.springframework.validation.Validator.Validator    javax.validation.Validator
 * JSR-303(Bean Validation 1.0)   
 * JSR-349(Bean Validation 1.1)  
 * [JSR-380(Bean Validation 2.0)](https://beanvalidation.org/)    
+    * 구현체로 hibernate-validator 사용한다. 
 
 여기서 언급된 자바 표준 Validation 은 아래와 같은 어노테이션을 지원한다.      
 `javax.validation.constraints`에 속하고 있다.      
@@ -113,6 +115,19 @@ public interface Validator {
     * 물론, ValidationUtils 말고도 구현할 수 있는 방법은 여러가지이다.     
 
 ```java
+pubilc class UserLogin {
+    
+    @NotNull
+    private String userName;
+    
+    @Min(6)
+    @NotNull
+    private String password;
+    
+    // 기타 생략 
+}
+```
+```java
 @Component
 public class AppRunner implements ApplicationRunner {
     
@@ -141,8 +156,9 @@ public class AppRunner implements ApplicationRunner {
     }
 }
 ```
-발생한 에러들을 
-
+* BeanPropertyBindingResult : 해당 객체에 대한 Error를 저장하는 역할을 한다.       
+* userLoginValidator.validate(userLogin, errors); 를 통해 에러를 검증하고 결과를 Errors 에 넣는다.     
+ 
 ```java
  public class UserLoginValidator implements Validator {
 
@@ -158,27 +174,32 @@ public class AppRunner implements ApplicationRunner {
        UserLogin login = (UserLogin) target;
        if (login.getPassword() != null
              && login.getPassword().trim().length() < MINIMUM_PASSWORD_LENGTH) {
-          errors.rejectValue("password", "field.min.length",
+          errors.rejectValue("password", "sizeMiss",
                 new Object[]{Integer.valueOf(MINIMUM_PASSWORD_LENGTH)},
                 "The password must be at least [" + MINIMUM_PASSWORD_LENGTH + "] characters in length.");
        }
     }
  }
 ```
+```shell
+true 				// hasErrors()
+===== error code =====
+notempty.userLogin.userName
+notempty.userName
+notempty.java.lang.String
+notempty
+Empty userName is now allowed
+
+// 기타 생략 
+```
 **public boolean supports(Class clazz)**     
-* 해당 클래스가 `UserLogin`인지 확인한다.      
-* `return UserLogin.equals(clazz.getClass)` 로 해도 된다.     
+* 해당 클래스가 `UserLogin`인지 확인한다.          
     
 **public void validate(Object target, Errors errors)**    
-* `userName`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.    
-* `password`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.       
-* `password`필드가 6 이하의 길이를 가지고 있다면  `field.min.length` 메시지를 넣는다.      
-
-
-스프링 부트 2.0.5 이상 버전을 사용할 때
-● LocalValidatorFactoryBean 빈으로 자동 등록
-● JSR-380(Bean Validation 2.0.1) 구현체로 hibernate-validator 사용.
-● https://beanvalidation.org/
+* `userName`필드가 null이거나 비어있다면 errors에  `notEmtpy` 메시지 키를 넣는다.       
+* `password`필드가 null이거나 비어있다면 errors에  `notEmtpy` 메시지 키를 넣는다.          
+* `password`필드가 6 미만의 길이를 가지고 있다면  `sizeMiss` 메시지 키를 넣는다.         
+* 간략히 `notEmtpy` 나 `sizeMiss`만 메시지키로 넣어도 관련 문자열을 생성해준다.      
    
 # 참고 
 [자바 캔](https://javacan.tistory.com/entry/Bean-Validation-2-Spring-5-valiidatiion)
