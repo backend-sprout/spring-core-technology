@@ -106,7 +106,7 @@ public class EventEditor extends PropertyEditorSupport {
            
 * **getAsText :** 애플리케이션에서 사용자로 보낼 때 매핑                
 * **setAsText :** 클라이언트 요청에서 애플리케이션으로 들어올 때 매핑             
-  
+    
 **DataEditor 특징**
 - Spring이 제공하는 DataBinder 인터페이스를 통해 사용됨
 - Spring 3 이전까지 DataBinder가 변환 작업에 사용한 인터페이스
