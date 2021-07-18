@@ -63,17 +63,22 @@ Resource resource = resourceLoader.getResource("classpath:configuration.xml");
     
 ```java
 ApplicationContext applicationContext = new GenericXmlApplicationContext("configuration.xml");
-Resource resource = resourceLoader.getResource("configuration.xml"); // 입력 안할시 META-INF 를 기본으로 찾는다.  
+Resource resource = resourceLoader.getResource("configuration.xml"); 
 ```
 단, 이러한 **접두사 지원 Resource 구현체는 각각의 `ApplicationContext`의 구현체마다 다르다**는 점을 유의하자             
+      
   
-* FileSystemResource
-* FileUrlResource
-* ClassPathResource
-* VfsResource
-* UrlResource
-* DescriptiveResource
-* InputStreamResource 등등...    
+|Resource 구현체|기능|
+|---------------|---|
+|UrlResource|java.net.URL 참고<br>기본으로 지원하는 프로토콜 http, https, ftp, file, jar.|
+|ClassPathResource|지원하는 접두어 classpath:|
+|ServletContextResource|웹 애플리케이션 루트에서 상대 경로로 리소스 찾는다.|
+|FileSystemResource||
+|FileUrlResource||
+|VfsResource||
+|UrlResource||
+|DescriptiveResource||
+|InputStreamResource||
 
 
 
