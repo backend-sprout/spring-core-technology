@@ -113,6 +113,35 @@ public interface Validator {
     * 물론, ValidationUtils 말고도 구현할 수 있는 방법은 여러가지이다.     
 
 ```java
+@Component
+public class AppRunner implements ApplicationRunner {
+    
+    @Override
+    pubilc void run(ApplicationArguments args) throws Exception {
+        // UserLogin을 전부 null로 만듬
+	// Validator 등록 
+	// Errors 등록 -> MVC 사용시 우리가 직접 정의하지 않고 내부에서 알아서 등록 및 사용한다.
+        UserLogin userLogin = new UserLogin(); 				  	
+	UserLoginValidator userLoginValidator = new UserLoginValidator(); 	
+	Errors errors = new BeanPropertyBindingResult(userLogin, "userLogin");
+	
+	// 검증 시작
+	// 가지고 있는 에러들 확인
+	// 에러를 리스트로로 반환 -> List<ObjectError> 
+	// ObjectError는 DefaultMessageSourceResolvable 상속
+	// DefaultMessageSourceResolvable의 String[] codes 를 사용해서 하나씩 출력    
+	userLoginValidator.validate(userLogin, errors);
+	System.out.println(errors.hasErrors());
+	errors.getAllErrors().forEach(e -> {
+	    System.out.println("===== error code =====");
+	    Arrays.stream(e.getCodes()).forEach(System.out::println);
+	    System.out.println(e.getDefaultMessage());
+	})
+		
+    }
+}
+```
+```java
  public class UserLoginValidator implements Validator {
 
     private static final int MINIMUM_PASSWORD_LENGTH = 6;
@@ -134,9 +163,15 @@ public interface Validator {
     }
  }
 ```
-* `userName`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.   
-* `password`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.    
-  
+**public boolean supports(Class clazz)**     
+* 해당 클래스가 `UserLogin`인지 확인한다.      
+* `return UserLogin.equals(clazz.getClass)` 로 해도 된다.     
+    
+**public void validate(Object target, Errors errors)**    
+* `userName`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.    
+* `password`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.       
+* `password`필드가 6 이하의 길이를 가지고 있다면  `field.min.length` 메시지를 넣는다.      
+
 
 스프링 부트 2.0.5 이상 버전을 사용할 때
 ● LocalValidatorFactoryBean 빈으로 자동 등록
