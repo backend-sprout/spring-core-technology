@@ -52,7 +52,7 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 * ServletContext를 기준으로 상대 경로로 읽어오는 기능 부재         
 * 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만 구현이 복잡하고 편의성 메소드가 부족하다.       
   
-## 코드를 통해 알아보기  
+## 리소스 읽어오기     
 ```java
 ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
 Resource resource = resourceLoader.getResource("classpath:configuration.xml");
@@ -80,6 +80,15 @@ Resource resource = resourceLoader.getResource("configuration.xml");
 |DescriptiveResource||
 |InputStreamResource||
 
+* Resource의 타입은 location 문자열과 ApplicationContext의 타입에 따라 결정 된다.
+  * `ClassPathXmlApplicationContext` -> `ClassPathResource`   
+  * `FileSystemXmlApplicationContext` -> `FileSystemResource`     
+  * `WebApplicationContext` -> `ServletContextResource`      
+  * 접두어를 입력하지 않을시 각 Resource 마다의 기본 접두어를 적용한다.            
+* ApplicationContext의 타입에 상관없이 리소스 타입을 강제하려면 java.net.URL
+  * 접두어(+ classpath:)중 하나를 사용할 수 있다.
+  * `classpath:me/whiteship/config.xml` -> `ClassPathResource`
+  * `file:///some/resource/path/config.xml` -> `FileSystemResource`
 
 
 
