@@ -138,6 +138,7 @@ public class EventController {
 하지만, 앞서 봤듯이 해당 작업을 하지 않더라도 동작은 하므로 크게 신경 쓸 필요는 없을 것 같다.       
 
 **@InitBinder란? 🤔**    
+ 
 
       
       
