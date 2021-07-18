@@ -54,17 +54,17 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 
 ```java
 ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
-Resource resource = resourceLoader.getResource("classpath:test.txt");
+Resource resource = resourceLoader.getResource("classpath:configuration.xml");
+
+ApplicationContext applicationContext = new FileSystemXmlApplicationContext("configuration.xml");
+Resource resource = resourceLoader.getResource("configuration.xml");
 ```    
 리소스를 추상화한 `Resource 인터페이스`는 실제로 스프링 내부에서 많이 활용되고 있으며              
 위 코드에서도 문자열로 들어간 리소스 경로 `"configuration.xml"`를 해당하는 `Resource` 구현체로 변환시키기에                
 `"classpath:test.txt"`를 사용했음에도 경로를 찾고 이에 해당하는 리소스를 찾아온다.(접두사 지원)       
 단, 이러한 접두사 지원 `Resource` 구현체는 각각의 `ApplicationContext`의 구현체마다 다르다는 점을 유의하자          
     
-```java
-ApplicationContext applicationContext = new FileApplicationContext("configuration.xml");
-Resource resource = resourceLoader.getResource("classpath:test.txt");
-```
+
 
 
 
