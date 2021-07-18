@@ -43,6 +43,17 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 디폴트로 사용할 수 있는 `org.springframework.core.io.Resource`를 개발하여 리소스 자체를 추상화했다.        
 (리소스를 가져오는 기능은 이전 `ApplicationContext`를 활용하여 가져오는 방법들을 통해 학습했다.)           
 
+**특징**  
+* java.net.URL를 추상화    
+* 스프링 내부에서 많이 사용하는 인터페이스   
+  
+**추상화 이유**
+* 기존, java.net.URL은 클래스패스 기준으로 리소를 가져오는 기능이 없었다.         
+* ServletContext를 기준으로 상대 경로로 읽어오는 기능 부재         
+* 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만 구현이 복잡하고 편의성 메소드가 부족하다.       
+
+## 리소스 읽어오기     
+**Resource 인터페이스**  
 ```java
 public interface Resource extends InputStreamSource {
     boolean exists();
@@ -54,17 +65,6 @@ public interface Resource extends InputStreamSource {
     String getDescription();
 }
 ```
-
-**특징**  
-* java.net.URL를 추상화    
-* 스프링 내부에서 많이 사용하는 인터페이스   
-  
-**추상화 이유**
-* 기존, java.net.URL은 클래스패스 기준으로 리소를 가져오는 기능이 없었다.         
-* ServletContext를 기준으로 상대 경로로 읽어오는 기능 부재         
-* 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만 구현이 복잡하고 편의성 메소드가 부족하다.       
-
-## 리소스 읽어오기     
 ```java
 ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
 Resource resource = resourceLoader.getResource("classpath:configuration.xml");
