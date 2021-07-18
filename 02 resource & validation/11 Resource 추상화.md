@@ -50,5 +50,23 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 **추상화 이유**
 * 기존, java.net.URL은 클래스패스 기준으로 리소를 가져오는 기능이 없었다.         
 * ServletContext를 기준으로 상대 경로로 읽어오는 기능 부재         
-* 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만   
-  구현이 복잡하고 편의성 메소드가 부족하다.    
+* 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만 구현이 복잡하고 편의성 메소드가 부족하다.       
+
+```java
+ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
+Resource resource = resourceLoader.getResource("classpath:test.txt");
+```    
+리소스를 추상화한 `Resource 인터페이스`는 실제로 스프링 내부에서 많이 활용되고 있으며              
+위 코드에서도 문자열로 들어간 리소스 경로 `"configuration.xml"`를 해당하는 `Resource` 구현체로 변환시키기에                
+`"classpath:test.txt"`를 사용했음에도 경로를 찾고 이에 해당하는 리소스를 찾아온다.(접두사 지원)       
+단, 이러한 접두사 지원 `Resource` 구현체는 각각의 `ApplicationContext`의 구현체마다 다르다는 점을 유의하자          
+    
+```java
+ApplicationContext applicationContext = new FileApplicationContext("configuration.xml");
+Resource resource = resourceLoader.getResource("classpath:test.txt");
+```
+
+
+
+
+
