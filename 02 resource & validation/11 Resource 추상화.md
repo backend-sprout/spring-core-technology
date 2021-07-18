@@ -65,6 +65,8 @@ public interface Resource extends InputStreamSource {
     String getDescription();
 }
 ```
+  
+**ClassPathApplicationContext**
 ```java
 ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
 Resource resource = resourceLoader.getResource("classpath:configuration.xml");
@@ -72,7 +74,8 @@ Resource resource = resourceLoader.getResource("classpath:configuration.xml");
 리소스를 추상화한 Resource 인터페이스는 실제로 스프링 내부에서 많이 활용되고 있으며              
 위 코드에서도 문자열로 들어간 리소스 경로 `"configuration.xml"`를 **해당하는 Resource 구현체로 변환**시키기에                
 `"classpath:configuration.xml`를 사용했음에도 경로를 찾고 이에 해당하는 리소스를 찾아온다.(접두사 지원)          
-    
+
+**GenericXmlApplicationContext**
 ```java
 ApplicationContext applicationContext = new GenericXmlApplicationContext("configuration.xml");
 Resource resource = resourceLoader.getResource("configuration.xml"); 
