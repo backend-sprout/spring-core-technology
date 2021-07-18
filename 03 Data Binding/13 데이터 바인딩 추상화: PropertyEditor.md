@@ -106,6 +106,14 @@ public class EventEditor extends PropertyEditorSupport {
            
 * **getAsText :** 애플리케이션에서 사용자로 보낼 때 매핑                
 * **setAsText :** 클라이언트 요청에서 애플리케이션으로 들어올 때 매핑             
+   
+그런데 여기서 주의할 점은 코드를 보면 알겠지만 `setValue()/getValue()`를 통해 값을 저장/반환한다.        
+즉, `PropertyEditor`는 내부적으로 `value`를 저장하는데 여기서 단점이 `thread-safe`하게 설계되어 있지 않다.        
+그렇기에 **만약 싱글톤으로 선언을 하게 된다면 여러 스레드에서 `PropertyEditor`의 value를 수정할 것이다.**        
+빈으로 만들어 사용하려면 `스레드 스코프`
+
+
+
     
 **DataEditor 특징**
 - Spring이 제공하는 DataBinder 인터페이스를 통해 사용됨
