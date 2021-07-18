@@ -87,19 +87,33 @@ public class User {
 |@Future (2)<br>@FutureOrPresent (2)||해당 시간이 미래 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 미래 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
 |@Past (2)<br>@PastOrPresent (2)||해당 시간이 과거 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 과거 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
   
-  
+   
 **참고**
 ```gradle
 implementation 'org.springframework.boot:spring-boot-starter-validation'
 ```
 스프링 부트에서는 위와 같이 의존성을 추가해주면 java 표준 Bean Validation 을 사용할 수 있다.   
      
-# 커스텀 Bean Validation     
+# 커스텀 Validator     
+`org.springframework.validation.Validator` 인터페이스는 아래와 같은 형태로 구성되어있다.   
+   
+```java
+package org.springframework.validation;
+
+public interface Validator {
+	boolean supports(Class<?> clazz);
+	void validate(Object target, Errors errors);
+}
+```
+이를 활용하여 `커스텀 Validator` 를 만들 수 있다.         
+
+* **boolean supports(Class clazz) :** 어떤 타입의 객체를 검증할 때 사용할 것인지 결정한다.   
+* **void validate(Object obj, Errors e) :** 실제 검증 로직을 이 안에서 구현한다.     
+    * 검증 로직을 구현할 때 ValidationUtils 사용하면 매우 편리 하다.     
+    * 물론, ValidationUtils 말고도 구현할 수 있는 방법은 여러가지이다.     
   
-인터페이스
-● boolean supports(Class clazz): 어떤 타입의 객체를 검증할 때 사용할 것인지 결정함
-● void validate(Object obj, Errors e): 실제 검증 로직을 이 안에서 구현
-○ 구현할 때 ValidationUtils 사용하며 편리 함.
+  
+
 
 스프링 부트 2.0.5 이상 버전을 사용할 때
 ● LocalValidatorFactoryBean 빈으로 자동 등록
