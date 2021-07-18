@@ -110,7 +110,7 @@ public class EventEditor extends PropertyEditorSupport {
 그런데 여기서 주의할 점은 코드를 보면 알겠지만 `setValue()/getValue()`를 통해 값을 저장/반환한다.        
 즉, `PropertyEditor`는 내부적으로 `value`를 저장하는데 여기서 단점이 `thread-safe`하게 설계되어 있지 않다.        
 그렇기에 **만약 싱글톤으로 선언을 하게 된다면 여러 스레드에서 `PropertyEditor`의 value를 수정할 것이다.**        
-빈으로 만들어 사용하려면 `스레드 스코프`
+빈으로 만들어 사용하려면 `스레드 스코프`로 활동 영역을 제한하여 사용하면 된다.       
 
 
 
