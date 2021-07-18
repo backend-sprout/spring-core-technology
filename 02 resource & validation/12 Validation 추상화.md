@@ -2,7 +2,7 @@ Validation 추상화
 ===================  
 스프링 프레임워크에서 제공하는 Validation 추상화에 대해서 알아보고자 한다.           
 `org.springframework.validation.Validator`는 객체 검증용 인터페이스로          
-주로 `MVC 기반의 웹 계층`에서 사용되지만 `서비스`, `데이터`에서 사용해도 좋다.       \  
+주로 `MVC 기반의 웹 계층`에서 사용되지만 `서비스`, `데이터`에서 사용해도 좋다.         
 (물론, javax 기반의 표준 validator가 존재하지만 스프링에서 사용하기에 스프링 validator가 낫다.)    
          
 ```java
