@@ -51,7 +51,7 @@ URI 사용되는 이유는 **Resource를 고유한 문자열을 통해 식별하
 * 기존, java.net.URL은 클래스패스 기준으로 리소를 가져오는 기능이 없었다.         
 * ServletContext를 기준으로 상대 경로로 읽어오는 기능 부재         
 * 새로운 핸들러를 등록하여 특별한 URL 접미사를 만들어 사용할 수는 있지만 구현이 복잡하고 편의성 메소드가 부족하다.       
-  
+
 ## 리소스 읽어오기     
 ```java
 ApplicationContext applicationContext = new ClassPathApplicationContext("configuration.xml");
@@ -66,8 +66,20 @@ ApplicationContext applicationContext = new GenericXmlApplicationContext("config
 Resource resource = resourceLoader.getResource("configuration.xml"); 
 ```
 단, 이러한 **접두사 지원 Resource 구현체는 각각의 `ApplicationContext`의 구현체마다 다르다**는 점을 유의하자             
-      
-  
+    
+**Resource 인터페이스** 
+```java
+public interface Resource extends InputStreamSource {
+    boolean exists();
+    boolean isOpen();
+    URL getURL() throws IOException;
+    File getFile() throws IOException;
+    Resource createRelative(String relativePath) throws IOException;
+    String getFilename();
+    String getDescription();
+}
+```
+
 |Resource 구현체|기능|
 |---------------|---|
 |UrlResource|java.net.URL 참고<br>기본으로 지원하는 프로토콜 http, https, ftp, file, jar.|
