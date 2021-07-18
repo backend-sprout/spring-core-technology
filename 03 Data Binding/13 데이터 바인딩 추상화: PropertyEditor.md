@@ -136,12 +136,10 @@ public class EventController {
 아니면 `@InitBinder`를 통해 `WebDataBinder`객체를 의존 주입받고       
 `webDataBinder.registerCustomEditor()`를 이용하여 `editor 대상`과 `editor`를 등록한다.         
 하지만, 앞서 봤듯이 해당 작업을 하지 않더라도 동작은 하므로 크게 신경 쓸 필요는 없을 것 같다.       
-
-**@InitBinder란? 🤔**    
- 
-
       
-      
+**@InitBinder란? 🤔**          
+* 특정 모델 객체에만 바인딩 또는 Validator 설정을 적용하고 싶은 경우       
+       
 **PropertyEditor 정리**
 - Spring이 제공하는 DataBinder 인터페이스를 통해 사용됨
 - Spring 3 이전까지 DataBinder가 변환 작업에 사용한 인터페이스
@@ -151,6 +149,3 @@ public class EventController {
            
 PropertyEditor를 사용하기에는 신경쓸게 많고 제한적이기에      
 이러한 문제를 해결하고자 Spring 3에서는 Converter와 Formatter를 지원하기 시작했다.        
-
-
-
