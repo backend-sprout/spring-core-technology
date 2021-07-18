@@ -111,9 +111,32 @@ public interface Validator {
 * **void validate(Object obj, Errors e) :** 실제 검증 로직을 이 안에서 구현한다.     
     * 검증 로직을 구현할 때 ValidationUtils 사용하면 매우 편리 하다.     
     * 물론, ValidationUtils 말고도 구현할 수 있는 방법은 여러가지이다.     
-  
-  
 
+```java
+ public class UserLoginValidator implements Validator {
+
+    private static final int MINIMUM_PASSWORD_LENGTH = 6;
+
+    public boolean supports(Class clazz) {
+       return UserLogin.class.isAssignableFrom(clazz);
+    }
+
+    public void validate(Object target, Errors errors) {
+       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "field.required");
+       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field.required");
+       UserLogin login = (UserLogin) target;
+       if (login.getPassword() != null
+             && login.getPassword().trim().length() < MINIMUM_PASSWORD_LENGTH) {
+          errors.rejectValue("password", "field.min.length",
+                new Object[]{Integer.valueOf(MINIMUM_PASSWORD_LENGTH)},
+                "The password must be at least [" + MINIMUM_PASSWORD_LENGTH + "] characters in length.");
+       }
+    }
+ }
+```
+* `userName`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.   
+* `password`필드가 null이거나 비어있다면 errors에  `field.required` 메시지를 넣는다.    
+  
 
 스프링 부트 2.0.5 이상 버전을 사용할 때
 ● LocalValidatorFactoryBean 빈으로 자동 등록
