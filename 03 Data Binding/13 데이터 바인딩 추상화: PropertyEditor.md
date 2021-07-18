@@ -76,37 +76,38 @@ class EventControllerTest {
     }
 }
 ```
-단순히 위와 같이 코드를 작성할 경우 데이터 바인딩은 원활히 이루어지지 않을 것이다.     
-   
-**그런데...**  
+단순히 위와 같이 코드를 작성할 경우 데이터 바인딩은 원활히 이루어지지 않을 것이다.       
+즉, 테스트 실패가 뜨는데 바인딩 작업을 따로 지정해주지 않았기 때문이다.                     
+필자는 이미 해결했지만, 동작 원리를 알기 위해서 `PropertyEditor`를 구현한 클래스를 만들어보자               
+           
+참고로, `PropertyEditor`는 단순한 인터페이스로 구현을 하기 위해서 많은 추상 메서드를 정의해줘야한다.      
+그렇기에 `PropertyEditor` 보다는 `PropertyEditorSupport`를 상속받는 형태로 작성해보자     
+       
+```java
+public class EventEditor extends PropertyEditorSupport {
+
+    @Override
+    public String getAsText() {
+        Event event = (Event) getValue();
+        return event.getId().toString();
+    }
+
+    @Override
+    public void setAsText(String text) throws IllegalArgumentException {
+        setValue(new Event(Integer.valueOf(text)));
+    }
+
+}
+
+```      
 ```shell
 2021-07-18 20:03:23.085  INFO 11312 --- [           main] com.example.core.EventController         : Event{id=1}
 ```  
-스프링 버전이 올라가면서 바인딩 기능이 더 좋아진 것 같다.         
-추측컨데 생성자가 `Integer` 한 개만 받으므로 이를 주입해준 것 같다.            
-              
-더 자세히 말하면,    
-**쿼리 스트링으로 온 값**일 경우 이름이 같거나 따로 매칭해줬어야 되었던걸로 기억하는데                  
-**단순히 REST API의 URL Path 값**은 이름이 없기 때문에 바로 생성자로 주입해준 것 같다.            
-          
-아무튼 백기선님 강의에서는 테스트 실패가 뜨는데 바인딩 작업을 따로 지정해주지 않았기 때문이다.                   
-필자는 이미 해결했지만, 동작 원리를 알기 위해서 `PropertyEditor`를 구현한 클래스를 만들어보자             
-        
-참고로, `PropertyEditor`는 단순한 인터페이스로 구현을 하기 위해서 많은 추상 메서드를 정의해줘야한다.      
-그렇기에 `PropertyEditor` 보다는 `PropertyEditorSupport`를 상속받는 형태로 작성해보자     
-    
-```java
-
-```
-
-
-
-
-
-
-● 스프링 3.0 이전까지 DataBinder가 변환 작업 사용하던 인터페이스
-● 쓰레드-세이프 하지 않음 (상태 정보 저장 하고 있음, 따라서 싱글톤 빈으로 등록해서
-쓰다가는...)
-● Object와 String 간의 변환만 할 수 있어, 사용 범위가 제한적 임. (그래도 그런 경우가
-대부분이기 때문에 잘 사용해 왔음. 조심해서..)
+           
+* **getAsText :** 애플리케이션에서 사용자로 보낼 때 매핑                
+* **setAsText :** 클라이언트 요청에서 애플리케이션으로 들어올 때 매핑             
+             
+스프링 3.0 이전까지 DataBinder가 변환 작업 사용하던 인터페이스  
+쓰레드-세이프 하지 않음 (상태 정보 저장 하고 있음, 따라서 싱글톤 빈으로 등록해서 쓰다가는...)   
+Object와 String 간의 변환만 할 수 있어, 사용 범위가 제한적 임. (그래도 그런 경우가 대부분이기 때문에 잘 사용해 왔음. 조심해서..)   
 
