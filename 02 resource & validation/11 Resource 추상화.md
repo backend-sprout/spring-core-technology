@@ -71,8 +71,8 @@ Resource resource = resourceLoader.getResource("configuration.xml");
 |Resource 구현체|기능|
 |---------------|---|
 |UrlResource|java.net.URL 참고<br>기본으로 지원하는 프로토콜 http, https, ftp, file, jar.|
-|ClassPathResource|지원하는 접두어 classpath:|
-|ServletContextResource|웹 애플리케이션 루트에서 상대 경로로 리소스 찾는다.|
+|ClassPathResource|`classpath:` 접두어를 지원한다.|     
+|ServletContextResource|가장 많이 사용하는 리소스<br> 웹 애플리케이션 루트(컨텍스트)에서 상대 경로로 리소스를 찾는다.|
 |FileSystemResource||
 |FileUrlResource||
 |VfsResource||
