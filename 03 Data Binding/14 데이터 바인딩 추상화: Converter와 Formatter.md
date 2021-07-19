@@ -149,9 +149,11 @@ public class EventController {
 ```
 단, `@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면         
 해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
-  
+     
+# Formatter
+`Formatter`는 `PropertyEditor`의 완벽한 대체제로 `Object <-> String` 간의 바인딩을 지원한다.         
 
-Formatter
+
 ● PropertyEditor 대체제
 ● Object와 String 간의 변환을 담당한다.
 ● 문자열을 Locale에 따라 다국화하는 기능도 제공한다. (optional)
