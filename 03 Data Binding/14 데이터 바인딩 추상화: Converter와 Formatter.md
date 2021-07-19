@@ -58,9 +58,11 @@ public class EventConverter {
     }
 }
 ```
-위와 같이 S타입을 T타입으로 변환하는 코드를 작성하면 된다.     
+위와 같이 `S 타입`을 `T 타입`으로 변환하는 코드를 작성하면 된다.     
 `Converter`는 **상태를 가지지 않아(Stateless) Thread-safe하고 빈을 등록해도 된다.**          
-**스프링 레거시 MVC의 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
+**스프링 레거시 MVC의 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**             
+(스프링 부트에서는 `@Componenet`만 붙여서 빈으로 등록만하면 자동으로 찾아 등록해준다.)        
+
  
 **특징**
 * S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
@@ -153,32 +155,50 @@ public class EventController {
 # Formatter
 `Formatter`는 `PropertyEditor`의 완벽한 대체제로 `Object <-> String` 간의 바인딩을 지원한다.                
 **상태를 가지지 않아(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**                
-**웹에서 사용자와 통신하는 데이터의 타입은 주로 `String`으로 Formmatter는 여기에 최적화 되어있다.**                     
-**Formmatter는 `MessageSource`를 이용하여 변환은 물론, 메시지 다국화 기능도 같이 제공할 수 있기 때문이다.**                  
-Converter와 마찬가지로 **스프링 레거시 MVC의 경우 `FormatterRegistry`에 등록해서 사용해야 한다.**         
+참고로, 웹에서 사용자와 통신하는 데이터의 타입은 주로 String으로 Formmatter는 여기에 최적화 되어있다.                       
+**Formmatter는 `MessageSource`를 이용하여 변환은 물론, 메시지 다국화 기능도 같이 제공할 수 있기 때문이다.**
+    
+```java
+public interface Formatter<T> extends Printer<T>, Parser<T> {
+    // T parse(String text, Locale locale) throws ParseException;
+    // String print(T object, Locale locale);
+}
+```
+`Printer<T>`와 `Parser<T>`를 인터페이스 상속받아 양방향으로 매핑하는 추상 메서드를 가지고 있다.   
+   
+```java
+// @Component
+public class EventFormatter implements Formatter<Event> {
+    
+    // @Autowired
+    // private MessageSource messageSource;
+    
+    @Override
+    public Event parse(String text, Locale locale) throws ParseException {
+        return new Event(Integer.parseInt(text));
+    }
 
-
-**Formatter**   
+    @Override
+    public String print(Event object, Locale locale) {
+        // 다국화 가능 String title = messageSource.getMessage("title", locale);
+        return object.getId().toString();
+    }
+}
+```
+위와 같이 양방향으로 매핑할 수 있는 로직을 구현해주면 되며      
+`MessageSource messageSource`를 의존성 주입받아 지역에 맞는 메시지를 전달해줄 수 있다.       
+**스프링 레거시 MVC의 경우 `FormatterRegistry`에 등록해서 사용해야 한다.**            
+(스프링 부트에서는 `@Componenet`만 붙여서 빈으로 등록만하면 자동으로 찾아 등록해준다.)            
+     
+**특징**   
 * PropertyEditor 대체제
 * Object와 String 간의 변환을 담당한다.
 * 문자열을 Locale에 따라 다국화하는 기능도 제공한다. (optional)
-* FormatterRegistry에 등록해서 사용
+* FormatterRegistry에 등록해서 사용해야한다.   
 
 
-public class EventFormatter implements Formatter<Event> {
-@Override
-public Event parse(String text, Locale locale) throws ParseException {
-Event event = new Event();
-int id = Integer.parseInt(text);
-event.setId(id);
-return event;
-}
-@Override
-public String print(Event object, Locale locale) {
-return object.getId().toString();
-}
-}
-ConversionService
+
+# ConversionService
 ● 실제 변환 작업은 이 인터페이스를 통해서 쓰레드-세이프하게 사용할 수 있음.
 ● 스프링 MVC, 빈 (value) 설정, SpEL에서 사용한다.
 ● DefaultFormattingConversionService
