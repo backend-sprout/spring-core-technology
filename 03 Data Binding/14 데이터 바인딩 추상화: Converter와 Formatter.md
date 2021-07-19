@@ -213,16 +213,40 @@ public class WebConfig implements WebMvcConfigurer {
 2021-07-19 21:10:24.173  INFO 10744 --- [           main] com.example.core.EventFormatter          : EventFormatter:1
 ```
 별다른 설정없이 동작시킬 경우 기본적으로 `Formatter`가 우선순위가 높다.   
+     
+# ConversionService      
+`DataBinder`인 `PropertyEditor`와 달리,   
+`Coverter`와 `Forammter`는 `ConversionService`를 사용하고 있다.    
+            
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
 
-# ConversionService
-● 실제 변환 작업은 이 인터페이스를 통해서 쓰레드-세이프하게 사용할 수 있음.
-● 스프링 MVC, 빈 (value) 설정, SpEL에서 사용한다.
-● DefaultFormattingConversionService
-● FormatterRegistry
-● ConversionService
-● 여러 기본 컴버터와 포매터 등록 해 줌.
+    // 주입되는 객체가 ConversionService라는 것이다.  
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new EventConverter.StringToEventConverter());
+        registry.addConverter(new EventConverter.EventToStringConverter());
+        registry.addFormatter(new EventFormatter());
+    }
+}
+```
+`FormatterRegistry registry`로 들어오는 값은 사실 `ConversionService`객체   
+즉, `resgistry` 에 등록하는 과정은 곧 `ConversionService`객체에 등록하고 있던 것이다.           
+결과적으로 `ConversionService`를 통해서 변환 작업이 이루어졌던 것이다.         
+    
+![image](https://user-images.githubusercontent.com/50267433/126158524-c2f3e596-0509-4563-86a2-cdf569f7b561.png)
 
-스프링 부트
+  
+**특징**
+* 실제 변환 작업은 이 인터페이스를 통해서 쓰레드-세이프하게 사용할 수 있음.
+* 스프링 MVC, 빈 (value) 설정, SpEL에서 사용한다.
+* DefaultFormattingConversionService     
+* FormatterRegistry   
+* ConversionService    
+* 여러 기본 컴버터와 포매터 등록 해 준다.      
+    
+# 스프링 부트
 ● 웹 애플리케이션인 경우에 DefaultFormattingConversionSerivce를 상속하여 만든
 WebConversionService를 빈으로 등록해 준다.
 ● Formatter와 Converter 빈을 찾아 자동으로 등록해 준다.
