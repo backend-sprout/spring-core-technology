@@ -251,9 +251,7 @@ public class WebConfig implements WebMvcConfigurer {
 * 웹 애플리케이션인 경우에 
   DefaultFormattingConversionSerivce를 상속하여 만든 **WebConversionService를 빈으로 등록해 준다.**   
 * Formatter와 Converter 빈을 찾아 자동으로 등록해 준다.(`@Componenet`)    
-  
-  
-
+    
 # InitBinder 우선순위    
 ```java
 @RestController
@@ -273,11 +271,6 @@ public class EventController {
 ```java
 2021-07-19 20:25:01.533  INFO 15048 --- [           main] com.example.core.EventEditor             : EventEditor :1
 ```
-단, `@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면         
-해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
+`@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면            
+해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.                
      
-     
-  
-  
-  
-  
