@@ -59,8 +59,8 @@ public class EventConverter {
 }
 ```
 위와 같이 S타입을 T타입으로 변환하는 코드를 작성하면 된다.     
-`Converter`는 **상태를 가지지 않기에(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**          
-**`스프링 레거시의 MVC`를 사용하는 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
+`Converter`는 **상태를 가지지 않아(Stateless) Thread-safe하고 빈을 등록해도 된다.**          
+**스프링 레거시 MVC의 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
  
 **특징**
 * S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
@@ -151,13 +151,20 @@ public class EventController {
 해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
      
 # Formatter
-`Formatter`는 `PropertyEditor`의 완벽한 대체제로 `Object <-> String` 간의 바인딩을 지원한다.         
+`Formatter`는 `PropertyEditor`의 완벽한 대체제로 `Object <-> String` 간의 바인딩을 지원한다.                
+**상태를 가지지 않아(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**                
+**웹에서 사용자와 통신하는 데이터의 타입은 주로 `String`으로 Formmatter는 여기에 최적화 되어있다.**                     
+**Formmatter는 `MessageSource`를 이용하여 변환은 물론, 메시지 다국화 기능도 같이 제공할 수 있기 때문이다.**                  
+Converter와 마찬가지로 **스프링 레거시 MVC의 경우 `FormatterRegistry`에 등록해서 사용해야 한다.**         
 
 
-● PropertyEditor 대체제
-● Object와 String 간의 변환을 담당한다.
-● 문자열을 Locale에 따라 다국화하는 기능도 제공한다. (optional)
-● FormatterRegistry에 등록해서 사용
+**Formatter**   
+* PropertyEditor 대체제
+* Object와 String 간의 변환을 담당한다.
+* 문자열을 Locale에 따라 다국화하는 기능도 제공한다. (optional)
+* FormatterRegistry에 등록해서 사용
+
+
 public class EventFormatter implements Formatter<Event> {
 @Override
 public Event parse(String text, Locale locale) throws ParseException {
@@ -183,3 +190,10 @@ ConversionService
 ● 웹 애플리케이션인 경우에 DefaultFormattingConversionSerivce를 상속하여 만든
 WebConversionService를 빈으로 등록해 준다.
 ● Formatter와 Converter 빈을 찾아 자동으로 등록해 준다.
+* 어쩐지 내꺼에서 잘 돌아가더라     
+  
+  
+참고로 기본 Integer 와 같은 타입은 기본으로 등록된 컨버터에서 알아서 변환해준다.   
+  
+  
+  
