@@ -147,18 +147,22 @@ public interface Formatter<T> extends Printer<T>, Parser<T> {
 ```java
 // @Component
 public class EventFormatter implements Formatter<Event> {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventFormatter.class);
     
     // @Autowired
     // private MessageSource messageSource;
     
     @Override
     public Event parse(String text, Locale locale) throws ParseException {
+        logger.info(text);
         return new Event(Integer.parseInt(text));
     }
 
     @Override
     public String print(Event object, Locale locale) {
         // 다국화 가능 String title = messageSource.getMessage("title", locale);
+        logger.info(object.getId().toString());
         return object.getId().toString();
     }
 }
