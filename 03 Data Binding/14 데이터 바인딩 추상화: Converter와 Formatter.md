@@ -24,37 +24,35 @@ public interface Converter<S, T> {
 
 ```java
 public class EventConverter {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(EventConverter.class);
+
     public static class StringToEventConverter implements Converter<String, Event> {
         @Override
         public Event convert(String source) {
+            logger.info("EventConverter : " + source);
             return new Event(Integer.parseInt(source));
         }
     }
-    
+
     public static class EventToStringConverter implements Converter<Event, String> {
         @Override
         public String convert(Event source) {
+            logger.info("EventConverter : " + source.toString());
             return source.getId().toString();
         }
     }
 }
+
 ```   
 ```java
-public class EventConverter {
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
 
-    public static class StringToEventConverter implements Converter<String, Event> {
-        @Override
-        public Event convert(String source) {
-            return new Event(Integer.parseInt(source));
-        }
-    }
-
-    public static class EventToStringConverter implements Converter<Event, String> {
-        @Override
-        public String convert(Event source) {
-            return source.getId().toString();
-        }
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new EventConverter.StringToEventConverter());
+        registry.addConverter(new EventConverter.EventToStringConverter());
     }
 }
 ```
