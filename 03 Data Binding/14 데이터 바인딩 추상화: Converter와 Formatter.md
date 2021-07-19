@@ -21,7 +21,6 @@ public interface Converter<S, T> {
 `Converter 인터페이스`는 제네릭을 지원하며          
 제네릭의 첫번째로 선언된 타입을 두번째로 선언된 타입으로 반환하는 메서드를 제공한다.          
 또한, `@FunctionalInterface`로 람다를 이용한 선언까지 가능하다.       
-Converter를 구현하여 데이터바인딩 로직을 알맞게 정의했다면 ConverterRegistry에 등록해서 사용해야한다.     
 
 ```java
 public class StringToEventConverter implements Converter<String, Event> {
@@ -32,8 +31,11 @@ public class StringToEventConverter implements Converter<String, Event> {
         return event;
     }
 }
-```
-
+```   
+위와 같이 S타입을 T타입으로 변환하는 코드를 작성하면 된다.     
+`Converter`는 **상태를 가지지 않기에(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**          
+그리고 빈을 등록했다면 **`스프링레거시`의 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
+  
 **특징**
 * S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
 * 상태 정보 없음 == Stateless == 쓰레드세이프
