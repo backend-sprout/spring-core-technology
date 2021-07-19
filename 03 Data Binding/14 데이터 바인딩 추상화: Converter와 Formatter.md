@@ -17,34 +17,29 @@ public interface Converter<S, T> {
     @Nullable
     T convert(S source);
 }
-```
-`Converter 인터페이스`는 제네릭을 지원하며        
-제네릭의 첫번째로 선언된 타입을 두번째로 선언된 타입으로 반환하는 메서드를 제공한다.       
-또한, `@FunctionalInterface`로 람다를 이용한 선언까지 가능하다.     
+``` 
+`Converter 인터페이스`는 제네릭을 지원하며          
+제네릭의 첫번째로 선언된 타입을 두번째로 선언된 타입으로 반환하는 메서드를 제공한다.          
+또한, `@FunctionalInterface`로 람다를 이용한 선언까지 가능하다.       
+Converter를 구현하여 데이터바인딩 로직을 알맞게 정의했다면 ConverterRegistry에 등록해서 사용해야한다.     
 
-
-
-
-
-
-
-
-
-데이터 바인딩 추상화: Converter와
-Formatter
-
-Converter
-● S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
-● 상태 정보 없음 == Stateless == 쓰레드세이프
-● ConverterRegistry에 등록해서 사용
+```java
 public class StringToEventConverter implements Converter<String, Event> {
-@Override
-public Event convert(String source) {
-Event event = new Event();
-event.setId(Integer.parseInt(source));
-return event;
+    @Override
+    public Event convert(String source) {
+        Event event = new Event();
+        event.setId(Integer.parseInt(source));
+        return event;
+    }
 }
-}
+```
+
+**특징**
+* S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
+* 상태 정보 없음 == Stateless == 쓰레드세이프
+* ConverterRegistry에 등록해서 사용해야 한다.  
+
+
 Formatter
 ● PropertyEditor 대체제
 ● Object와 String 간의 변환을 담당한다.
