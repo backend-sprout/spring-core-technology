@@ -4,7 +4,8 @@
 # Converter   
 기존의 `PropertyEditor` 는 `String <-> Object` 간의 매핑을 지원한다.         
 반대로 생각해보면, **String 이 아닌 다른 타입으로는 매핑을 할 수 없다는 뜻이기도하다.**      
-      
+(기본 Integer 와 같은 타입은 기본으로 등록된 컨버터에서 알아서 변환해준주긴 한다.)     
+        
 사실 데이터 바인딩은 주로 클라이언트의 요청 데이터를 가공할 때 쓰이기에 String 만 있어도 충분하다.            
 하지만, 조금 더 일반적으로 `특정 타입 <-> 특정 타입`으로도 변환이 가능한 환경도 존재해야하기에         
 **`Converter`라는 인터페이스가 등장했다.**       
@@ -241,20 +242,17 @@ public class WebConfig implements WebMvcConfigurer {
 **특징**
 * 실제 변환 작업은 이 인터페이스를 통해서 쓰레드-세이프하게 사용할 수 있음.
 * 스프링 MVC, 빈 (value) 설정, SpEL에서 사용한다.
-* DefaultFormattingConversionService     
+* DefaultFormattingConversionService(스프링 레거시)        
 * FormatterRegistry   
 * ConversionService    
 * 여러 기본 컴버터와 포매터 등록 해 준다.      
-    
-# 스프링 부트
-● 웹 애플리케이션인 경우에 DefaultFormattingConversionSerivce를 상속하여 만든
-WebConversionService를 빈으로 등록해 준다.
-● Formatter와 Converter 빈을 찾아 자동으로 등록해 준다.
-* 어쩐지 내꺼에서 잘 돌아가더라     
+     
+**스프링 부트에서는...**   
+* 웹 애플리케이션인 경우에 
+  DefaultFormattingConversionSerivce를 상속하여 만든 **WebConversionService를 빈으로 등록해 준다.**   
+* Formatter와 Converter 빈을 찾아 자동으로 등록해 준다.(`@Componenet`)    
   
   
-참고로 기본 Integer 와 같은 타입은 기본으로 등록된 컨버터에서 알아서 변환해준다. 
-
 
 # InitBinder 우선순위    
 ```java
