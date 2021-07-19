@@ -23,24 +23,133 @@ public interface Converter<S, T> {
 또한, `@FunctionalInterface`로 람다를 이용한 선언까지 가능하다.       
 
 ```java
-public class StringToEventConverter implements Converter<String, Event> {
-    @Override
-    public Event convert(String source) {
-        Event event = new Event();
-        event.setId(Integer.parseInt(source));
-        return event;
+public class EventConverter {
+    
+    public static class StringToEventConverter implements Converter<String, Event> {
+        @Override
+        public Event convert(String source) {
+            return new Event(Integer.parseInt(source));
+        }
+    }
+    
+    public static class EventToStringConverter implements Converter<Event, String> {
+        @Override
+        public String convert(Event source) {
+            return source.getId().toString();
+        }
     }
 }
 ```   
+```java
+public class EventConverter {
+
+    public static class StringToEventConverter implements Converter<String, Event> {
+        @Override
+        public Event convert(String source) {
+            return new Event(Integer.parseInt(source));
+        }
+    }
+
+    public static class EventToStringConverter implements Converter<Event, String> {
+        @Override
+        public String convert(Event source) {
+            return source.getId().toString();
+        }
+    }
+}
+```
 위와 같이 S타입을 T타입으로 변환하는 코드를 작성하면 된다.     
 `Converter`는 **상태를 가지지 않기에(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**          
-그리고 빈을 등록했다면 **`스프링레거시`의 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
-  
+**`스프링 레거시의 MVC`를 사용하는 경우 직접 `ConverterRegistry`에 등록해서 사용해야한다.**          
+ 
 **특징**
 * S 타입을 T 타입으로 변환할 수 있는 매우 일반적인 변환기.
 * 상태 정보 없음 == Stateless == 쓰레드세이프
 * ConverterRegistry에 등록해서 사용해야 한다.  
+    
+##  Converter VS PropertyEditor    
+`Converter` 와 `PropertyEditor` 두 클래스 모두 데이터 바인딩에 사용되는 인터페이스다.    
+만약 두 인터페이스를 구현한 구현체가 동시에 존재하다면 우선순위는 어떻게 될까?     
 
+```java
+public class EventConverter {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventConverter.class);
+
+    public static class StringToEventConverter implements Converter<String, Event> {
+        @Override
+        public Event convert(String source) {
+            logger.info("EventConverter : " + source);
+            return new Event(Integer.parseInt(source));
+        }
+    }
+
+    public static class EventToStringConverter implements Converter<Event, String> {
+        @Override
+        public String convert(Event source) {
+            logger.info("EventConverter : " + source.toString());
+            return source.getId().toString();
+        }
+    }
+}
+```
+```java
+public class EventEditor extends PropertyEditorSupport {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventEditor.class);
+
+    @Override
+    public String getAsText() {
+        Event event = (Event) getValue();
+        logger.info("EventEditor :" + event.toString());
+        return event.getId().toString();
+    }
+
+    @Override
+    public void setAsText(String text) throws IllegalArgumentException {
+        logger.info("EventEditor :" + text);
+        setValue(new Event(Integer.valueOf(text)));
+    }
+
+}
+```
+```java
+@RestController
+public class EventController {
+
+    @GetMapping("/event/{event}")
+    public String getEvent(@PathVariable Event event) {
+        return event.getId().toString();
+    }
+}
+```
+```shell
+2021-07-19 20:24:45.658  INFO 10640 --- [           main] com.example.core.EventConverter          : EventConverter : 1
+```
+별다른 설정없이 동작을 하면 기본적으로 `Converter`가 우선순위가 높다.   
+
+
+```java
+@RestController
+public class EventController {
+
+    @InitBinder
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(Event.class, new EventEditor());
+    }
+
+    @GetMapping("/event/{event}")
+    public String getEvent(@PathVariable Event event) {
+        return event.getId().toString();
+    }
+}
+```
+```java
+2021-07-19 20:25:01.533  INFO 15048 --- [           main] com.example.core.EventEditor             : EventEditor :1
+```
+단, `@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면         
+해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
+  
 
 Formatter
 ● PropertyEditor 대체제
