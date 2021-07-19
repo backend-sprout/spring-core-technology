@@ -129,29 +129,7 @@ public class EventController {
 2021-07-19 20:24:45.658  INFO 10640 --- [           main] com.example.core.EventConverter          : EventConverter : 1
 ```
 별다른 설정없이 동작을 하면 기본적으로 `Converter`가 우선순위가 높다.   
-
-
-```java
-@RestController
-public class EventController {
-
-    @InitBinder
-    public void init(WebDataBinder webDataBinder) {
-        webDataBinder.registerCustomEditor(Event.class, new EventEditor());
-    }
-
-    @GetMapping("/event/{event}")
-    public String getEvent(@PathVariable Event event) {
-        return event.getId().toString();
-    }
-}
-```
-```java
-2021-07-19 20:25:01.533  INFO 15048 --- [           main] com.example.core.EventEditor             : EventEditor :1
-```
-단, `@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면         
-해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
-     
+    
 # Formatter
 `Formatter`는 `PropertyEditor`의 완벽한 대체제로 `Object <-> String` 간의 바인딩을 지원한다.                
 **상태를 가지지 않아(Stateless) `Thread-safe`하고 빈을 등록해도 된다.**                
@@ -185,6 +163,17 @@ public class EventFormatter implements Formatter<Event> {
     }
 }
 ```
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(new EventFormatter());
+    }
+}
+```
+
 위와 같이 양방향으로 매핑할 수 있는 로직을 구현해주면 되며      
 `MessageSource messageSource`를 의존성 주입받아 지역에 맞는 메시지를 전달해줄 수 있다.       
 **스프링 레거시 MVC의 경우 `FormatterRegistry`에 등록해서 사용해야 한다.**            
@@ -197,7 +186,29 @@ public class EventFormatter implements Formatter<Event> {
 * FormatterRegistry에 등록해서 사용해야한다.   
 
 
+# InitBinder 우선순위    
+```java
+@RestController
+public class EventController {
 
+    @InitBinder
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(Event.class, new EventEditor());
+    }
+
+    @GetMapping("/event/{event}")
+    public String getEvent(@PathVariable Event event) {
+        return event.getId().toString();
+    }
+}
+```
+```java
+2021-07-19 20:25:01.533  INFO 15048 --- [           main] com.example.core.EventEditor             : EventEditor :1
+```
+단, `@InitBinder`를 사용하여 `webDataBinder`에 `PropertyEditor`를 등록하면         
+해당 `Controller` 클래스에 한정하여 `PropertyEditor`가 우선으로 동작한다.             
+     
+     
 # ConversionService
 ● 실제 변환 작업은 이 인터페이스를 통해서 쓰레드-세이프하게 사용할 수 있음.
 ● 스프링 MVC, 빈 (value) 설정, SpEL에서 사용한다.
