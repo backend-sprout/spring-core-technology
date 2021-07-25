@@ -1,33 +1,6 @@
-# AOP
-> 기존 kwj1270이 정리했던 [AOP-(AspectJ)](https://github.com/kwj1270/TIL_SPRING_QUICK_START/blob/master/%EC%A0%95%EB%A6%AC/08%20%EC%8A%A4%ED%94%84%EB%A7%81%20AOP.md)
-## 시나리오
-### TAKE_1
-   
-```
-선배 개발자 : 회원가입 하는 시간 좀 측정해서 로그로 남겨줄 수 있어요?   
-개발자 : ok
-```
+# 📕 AOP
+## 📖 AOP 개요 
 
-**기존 코드**
-```java
-public void join(JoinRequest joinRequest) {
-  memberRepository.save(joinRequest.toMember());
-}
-```
-
-**개발자가 작성한 코드 - 일반 버전**
-```java
-public void join(JoinRequest joinRequest) {
-  long begin = System.currentTimeMillis();
-  try {
-    memberRepository.save(joinRequest.toMember());
-  } finally {
-    log.info("join spen {} ms", System.currentTimeMills() - begin);
-  }
-}
-```
-
-**개발자가 작성한 코드 - 객체지향 버전**
 ```java
 public void join(JoinRequest joinRequest) {
   StopWatch stopWatch = new StopWatch();
@@ -40,40 +13,20 @@ public void join(JoinRequest joinRequest) {
   }
 }
 ```
-
-### TAKE_2
-   
-```
-선배 개발자 : 오케이 정말 잘했어요 그럼 이 코드를 모든 서비스에 적용시켜줄래요?   
-개발자 : ....?!
-사실 서비스는 1억개이며 여기에 있는 메서드들도 각각 1억개라고 한다면?     
-```    
-
-* 로깅 같은 작업은 개발에 있어서 중요한 작업이지만 만약 무수히 많은 클래스에서 사용한다면 이를 관리할 수 있을까?   
-* 아니 다시 말하자면, 단순 반복되면서 사용되는 코드를 모든 코드에 각각 기술해서 사용해야 할까?     
-  
-**개발자가 작성한 코드 - 객체지향 버전**
-```java
-public void join(JoinRequest joinRequest) {
-  StopWatch stopWatch = new StopWatch();
-  stopWatch.strat();
-  try {
-    memberRepository.save(joinRequest.toMember());
-  } finally {
-    stopWatch.stop();
-    log.info("join spen {} ms", stopWatch.getLastTaskTimeMillis());
-  }
-}
-```
-* 우리는 생각해야하한다.    
+회원가입을 진행하는 Service 코드다.            
+성능 부하가 의심되어 해당 메서드에 시간을 측정하는 코드를 작성했다.        
+그러나, 코드를 보면 알듯이 가독성이 떨어지고 응집성이 떨어지고            
+무엇보다도 많은 클래스에서 사용한다면 이를 관리할 수 있을지 의문이다.    
+                
+**우리는 아래와 같은 요소들에 대해서 생각해야한다.**          
 * 각각의 메서드는 1가지 기능만 수행해야 한다.   
 * 또한, Service 클래스와 그 메서드의 본질적인 역할은 **비즈니스 로직을 처리하는 것**이지 로깅을 하는 것이 아니다.   
-* 오히려 위 코드가 삽입되면서 비즈니스 로직에 대한 가독성은 줄어들고 관리해야할 코드는 늘었다.   
-  * 핵심 기능 : 비지니스 로직 
-  * 부가 기능 : 로깅 로직  
-* 그렇다면 로깅 메서드를 분리해서 이를 사용하는 방법을 사용할까?   
-  * 나쁘지 않다! 하지만 좋지도 않다.
-
+* 오히려 성능 측정 코드가 삽입되면서 비즈니스 로직에 대한 가독성은 줄어들고 관리해야 할 코드는 늘었다.   
+  * **핵심 기능 :** 비지니스 로직  
+  * **부가 기능 :** 로깅 로직      
+   
+그렇다면 로깅 메서드를 분리해서 이를 사용하는 방법을 사용할까?      
+    
 ## 부가 기능   
 > 인프라 로직  
 
