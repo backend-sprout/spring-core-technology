@@ -85,7 +85,8 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 |Advice|AOP 메서드 : AOP 적용시에 사용되는 메서드 (부가 기능 로직 메서드)<br>부가 기능은 물론 적용 시점까지도 지정할 수 있다.<br>- before : 비즈니스 메소드 실행 전에 동작<br>- after : 비즈니스 메소드 실행 후에 동작<br>- after-returning : 비즈니스 메소드 실행 중 리턴 되는 순간에<br>- after-throwing : 비즈니스 메소드 실행 중 에러 발생 순간에<br>- around	: 비즈니스 메소드 실행 전/후에 동작| 
 |Join point|AOP가 적용될 수 있는 요소다.<br>- **메소드**, 필드, 객체, 생성자 등 (Spring AOP에서는 메서드만 가능)|
 |PointCut|AOP가 적용될 수 있는 모든 Element들에서 실제 사용하고자 지정된 몇 개를 의미 (전체 중 사용될 일부를 의미)<br>즉, Join point에서 실제 advice가 적용될 몇 개의 지점, Spring AOP 에서는 advice가 적용될 메서드를 선정|
-|Weaving|Point cut으로 지정된 요소가 호출될 때 어드바이스 메서드(AOP메서드)가 호출되는 과정을 의미<br>즉, Point cut 으로 지정한 핵심 관심 메서드가 호출될 때, 어드바이스에 해당하는 횡단 관심 메서드가 삽입되는 과정을 의미한다.<br>**Weaving 처리 방식 (AOP 구현 방법)**<br>- 컴파일타임 위빙 : a.java -> a.clss 컴피일 될 때<br>- 로딩타임 위빙 : a.class 를 클래스 로더가 메모리에 로드할 때<br>- 런타임/프록시 위빙 : 타겟 클래스를 부가 기능을 가지는 Proxy로 감싸서 실행(스프링 AOP에서는 IOC/DI를 이용한 방법)<br>-스프링에서는 **런타임 위빙**만을 지원한다.           |**Aspect(Advisor)**|Point cut과 Advice의 결합<br>- 어떤 Point cut Element에 대해서 어떤 Advice 메서드를 실행할지 결정한다.<br>- Aspect 설정에 따라 AOP의 동작 방식이 결정되므로 AOP 용어 중 가장 중요한 개념이라 할 수 있다.|
+|Weaving|Point cut으로 지정된 요소가 호출될 때 어드바이스 메서드(AOP메서드)가 호출되는 과정을 의미<br>즉, Point cut 으로 지정한 핵심 관심 메서드가 호출될 때, 어드바이스에 해당하는 횡단 관심 메서드가 삽입되는 과정을 의미한다.<br>**Weaving 처리 방식 (AOP 구현 방법)**<br>- 컴파일타임 위빙 : a.java -> a.clss 컴피일 될 때<br>- 로딩타임 위빙 : a.class 를 클래스 로더가 메모리에 로드할 때<br>- 런타임/프록시 위빙 : 타겟 클래스를 부가 기능을 가지는 Proxy로 감싸서 실행(스프링 AOP에서는 IOC/DI를 이용한 방법)<br>-스프링에서는 **런타임 위빙**만을 지원한다.|
+|**Aspect(Advisor)**|Point cut과 Advice의 결합<br>- 어떤 Point cut Element에 대해서 어떤 Advice 메서드를 실행할지 결정한다.<br>- Aspect 설정에 따라 AOP의 동작 방식이 결정되므로 AOP 용어 중 가장 중요한 개념이라 할 수 있다.|
 |proxy|대상 객체에 Advice가 적용된 후 생성된 객체|
    
 ![KakaoTalk_20191104_223639173](https://user-images.githubusercontent.com/50267433/68124857-a65d1f80-ff53-11e9-8e77-33fd360a2bb6.jpg)    
