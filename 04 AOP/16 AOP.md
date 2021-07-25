@@ -98,10 +98,10 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 
 ## AOP 구현 
 ```gradle
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
+implementation 'org.springframework.boot:spring-boot-starter-aop'
 ```
 ```java
-@EnableAspectJAutoProxy
+// @EnableAspectJAutoProxy 생략 가능 
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) { SpringApplication.run(Application.class,args); }
@@ -116,8 +116,7 @@ public class AuthServiceImpl {
 }
 ```
 
-### 📄 일반적인 구현 
-      
+### 📄 일반적인 구현      
 ```java
 @Aspect
 @Configuration
@@ -190,7 +189,7 @@ public class UselessAspect {
      * @AfterReturning
      * @AfterThrowing
      */
-    @After("execution(* me.kwj1270.study.service.AuthServiceImpl.*(..))")
+    @After("@annotation(me.kwj1270.study.annotation.PerformanceCheck)")
     public void After() throws Throwable {
         log.info("After 어드바이스");
     }
