@@ -255,23 +255,8 @@ get*(..)                : 메소드명 및 매개변수
 |`(Integer, ..)`|한 개 이상의 매개변수를 가지되, 첫 번째 매개변수의 타입이 integer인 메서드만 허용|
 |`(Integer, *)`|반드시 두 개의 매개변수를 가지되, 첫 번째 매개변수의 타입이 integer인 메서드만 허용|
         
-# 실제 AOP 작성하기  
-## 일반적인 구현   
-
-
-
-
-**결과**
-```
-2020-11-16 21:43:00.744  INFO 5986 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 before 어드바이스이다.
-businessLogicMethod process!
-2020-11-16 21:43:00.751  INFO 5986 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : request spent 7 ms
-2020-11-16 21:43:00.753  INFO 5986 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 After 어드바이스이다.
-2020-11-16 21:43:00.753  INFO 5986 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 AfterReturning 어드바이스이다.
-```
-
-
-# 런타임/프록시 위빙이란?    
+   
+# 🔍 런타임/프록시 위빙   
 * Proxy를 생성하여 실제 타깃(Target) 오브젝트의 변형없이 위빙을 수행한다.    
 * 실제 런타임 상, Method 호출 시에 위빙이 이루어 지는 방식이다.     
 * 소스파일, 클래스 파일에 대한 변형이 없다는 장점이 있지만, 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다는 단점이 있다.    
