@@ -96,7 +96,7 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 5. 애스팩트 설정에 따라 **위빙 처리되어 프록시 객체가 생성된다.(동적 프록시 생성)**                 
 6. 프록시 객체를 통해 부가기능이 포함된 비즈니스 로직을 수행한다.              
 
-## AOP 구현 
+## 📖 AOP 구현 
 ```gradle
 implementation 'org.springframework.boot:spring-boot-starter-aop'
 ```
@@ -199,7 +199,53 @@ public class UselessAspect {
 * `어노테이션`과 `Aspect`가 동일 위치면 어노테이션만 적어도 된다.   
 * 패키지가 다르면 FQCN(Fully qualified Class Name)을 다 입력해주어야 한다.    
 
+### 📄 빈으로 구현   
+```java
+@Aspect
+@Component
+public class UselessAspect {
+
+    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
+
+    @Around("bean(me.kwj1270.study.service.AuthServiceImpl)")
+    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
+        StopWatch stopWatch = new StopWatch();
+        try {
+            stopWatch.start();
+            return joinPoint.proceed();
+        } finally {
+            stopWatch.stop();
+            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
+        }
+    }
+
+    /** 
+     * @Before
+     * @AfterReturning
+     * @AfterThrowing
+     */
+    @After("bean(me.kwj1270.study.service.AuthServiceImpl)")
+    public void After() throws Throwable {
+        log.info("After 어드바이스");
+    }
+
+}
+```
+* `빈`과 `Aspect`가 동일 위치면 어노테이션만 적어도 된다.   
+* 패키지가 다르면 FQCN(Fully qualified Class Name)을 다 입력해주어야 한다.    
+   
 ## 📖 AOP PointCut 설정  
+```java
+execution(* com.springbook.biz..*Impl.get*(..))"
+```   
+
+* `*` : 리턴값
+* `com.springbook.biz..` : 패키지
+* `*Impl`: 클래스 이름
+* `get*` : 메서드 이름
+* `(..)` : 매개변수 
+* 중간마다의 `.` : 구분점   
+
 ### 📄 execution 포인트 컷 리턴
 
 |표현식|설명| 
@@ -214,8 +260,8 @@ public class UselessAspect {
 |----|---|      
 |`com.springbook.biz`|정학하게 해당 패키지만 선택|      
 |`com.springbook.biz..`|해당 패키지 및 모든 하위 패키지 선택|      
-|`com.springbook..impl`|`..`앞 패키지로 시작하면서 마지막 패키지 이름이 `..`로 끝나는 패키지 선택|          
-
+|`com.springbook..impl`|`..`앞 패키지로 시작하면서 마지막 패키지 이름이 `..`뒤로 끝나는 패키지 선택|          
+   
 ### 📄 execution 포인트 컷 클래스
 |표현식|설명|  
 |----|---|      
