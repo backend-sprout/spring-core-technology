@@ -66,8 +66,6 @@ another way of thinking about program structure
 
 AOP는 프로그램 구조에 대한 다른 생각의 방향을 제공해주면서 OOP를 보완하고 있다.       
 ```      
-
-
   
 예를 들면 어떠한 클래스를 대상으로 `핵심 기능`과 `부가적인 기능`의 관점으로         
 **공통 사용 부가 기능들을 외부의 독립된 클래스로 분리하고**                
@@ -88,9 +86,9 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 |Weaving|Point cut으로 지정된 요소가 호출될 때 어드바이스 메서드(AOP메서드)가 호출되는 과정을 의미<br>즉, Point cut 으로 지정한 핵심 관심 메서드가 호출될 때, 어드바이스에 해당하는 횡단 관심 메서드가 삽입되는 과정을 의미한다.<br>**Weaving 처리 방식 (AOP 구현 방법)**<br>- 컴파일타임 위빙 : a.java -> a.clss 컴피일 될 때<br>- 로딩타임 위빙 : a.class 를 클래스 로더가 메모리에 로드할 때<br>- 런타임/프록시 위빙 : 타겟 클래스를 부가 기능을 가지는 Proxy로 감싸서 실행(스프링 AOP에서는 IOC/DI를 이용한 방법)<br>-스프링에서는 **런타임 위빙**만을 지원한다.|
 |**Aspect(Advisor)**|Point cut과 Advice의 결합<br>- 어떤 Point cut Element에 대해서 어떤 Advice 메서드를 실행할지 결정한다.<br>- Aspect 설정에 따라 AOP의 동작 방식이 결정되므로 AOP 용어 중 가장 중요한 개념이라 할 수 있다.|
 |proxy|대상 객체에 Advice가 적용된 후 생성된 객체|
-   
-![KakaoTalk_20191104_223639173](https://user-images.githubusercontent.com/50267433/68124857-a65d1f80-ff53-11e9-8e77-33fd360a2bb6.jpg)    
-      
+    
+![AOP](https://user-images.githubusercontent.com/50267433/126900960-e0ed4a26-9521-49ac-bfd3-c9a915c12772.png)    
+
 1. 사용자는 시스템을 사용하면서 자연스럽게 비즈니스 컴포넌트의 여러 조인포인트를 호출하게 된다.
 2. 이때 특정 포인트컷으로 지정한 메소드가 호출되는 순간,
 3. 어드바이스 객체의 어드바이스 메소드가 호출된다.
