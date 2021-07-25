@@ -70,12 +70,212 @@ AOP는 프로그램 구조에 대한 다른 생각의 방향을 제공해주면�
 예를 들면 어떠한 클래스를 대상으로 `핵심 기능`과 `부가적인 기능`의 관점으로         
 **공통 사용 부가 기능들을 외부의 독립된 클래스로 분리하고**                
 **이를 모듈화하여 재사용할 수 있게끔 하는 프로그래밍 기법이다.**                 
-               
-독립된 클래스/모듈을 Aspect라고 부르며           
-Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,   
-`성능 측정`, `로깅`과 같이 **한 가지 특정 기능에 대해 관심사를 분리한 클래스다.**     
+                 
+**AOP 구현체**    
+* AspectJ : 다양한 포인트 컷 제공       
+* 스프링 AOP : 제한적이지만 효율적인 기능 제공   
+  
+# 📗 스프링 AOP  
+스프링 AOP 는 **런타임 위빙을 지원하기에 Proxy 기반의 AOP 구현 기능을 지원한다.**             
+이러한 **Proxy 기반의 AOP는 스프링 빈에만 적용가능하기에 빈으로 등록된 대상만 AOP 대상이 된다.**         
+또한, **스프링 AOP 특징상 메서드만을 지원할 수 있다.**        
+         
+ 
+## 스프링 AOP 개요    
+**프록시 패턴**   
+```java
+
+```
+
+프록시 패턴은 **AOP에서 기존 코드의 변경 없이 접근 제어 또는 부가 기능 추가하기 위해 사용된다.**              
+그러나 일반적인 방법으로 프록시 패턴을 구현하면 아래와 같은 문제점이 발생한다.         
+                
+**문제점**  
+* 매번 Proxy 클래스를 작성해야 한다.    
+* 하나의 클래스가 아닌 여러 클래스를 대상으로 적용하기 힘들다.    
+* 객체 관계가 복잡해지고 관리하기 어렵다.     
+         
+이러한 문제점을 해결하기 위해 등장한 것이 바로 `Spring AOP`와 `Dynamic Proxy`다.  
+**스프링 IoC 컨테이너가 제공하는 기반 시설과 Dynamic Proxy를 사용하여 여러 복잡한 문제 해결했다.**      
+  
+* **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법
+    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리
+    * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리
+* **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**    
+    * 클라이언트 코드 변경이 없다.   
+    * `AbstractAutoProxyCreator implements BeanPostProcessor`를 기반으로 만든다.  
+    * 즉 빈이 생성된 후, 프록시를 생성하는 로직을 수행한다.     
+
+
    
-# AOP 용어 
+# 🔍 런타임/프록시 위빙   
+* Proxy를 생성하여 실제 타깃(Target) 오브젝트의 변형없이 위빙을 수행한다.    
+* 실제 런타임 상, Method 호출 시에 위빙이 이루어 지는 방식이다.     
+* 소스파일, 클래스 파일에 대한 변형이 없다는 장점이 있지만, 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다는 단점이 있다.    
+* 또한 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.       
+     
+**org.woowacourse.aoppractice.controller.AopController**     
+```java
+package org.woowacourse.aoppractice.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.woowacourse.aoppractice.service.AuthServiceImpl;
+
+@RestController
+public class AopController {
+    
+    private final AuthServiceImpl authService;
+    
+    public AopController(AuthServiceImpl authService){
+        System.out.println(authService.getClass().getName());
+        this.authService = authService;
+    }
+
+    @GetMapping("/")
+    public void logTest(){
+        authService.businessLogicMethod();
+    }
+
+}
+```
+
+**결과**
+```
+org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d
+```
+
+* 메서드를 감싸는 것이 아닌 Target 클래스를 프록시로 감싸는 것을 알 수 있다.   
+* 물론 AOP를 사용하지 않으면 `org.woowacourse.aoppractice.service.AuthServiceImpl`가 출력된다.   
+* 기존 객체 : AuthServiceImpl      
+* 프록시 객체 : AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
+* CGLIB란? : https://www.youtube.com/watch?v=RHxTV7qFV7M    
+  * 간략히 말하면 클래스 상속을 이용해서 만든 프록시 객체를 의미    
+  * 추후에 정리할 예정        
+    
+<img width="1285" alt="스크린샷 2020-11-17 오전 11 06 34" src="https://user-images.githubusercontent.com/50267433/99337118-0b688680-28c5-11eb-9c99-b0992130f269.png">   
+
+* 기존에는 `AuthController(AopController)` 가 `AuthService`를 의존(참조함)  
+* 프록시 위빙을 적용하면 `AuthService`를 상속받은 `AuthService$$블라블라`를 의존  
+* 상속을 이용한 방식이기에 다형성을 이용하여 하위 클래스인 `AuthService$$블라블라`를 의존 참조할 수 있는 것이다.
+  * `private final AuthServiceImpl authService;`
+  * `public AopController(AuthServiceImpl authService){this.authService = authService;}`
+* `AuthService$$블라블라`는 `AuthService`를 상속받은 클래스인데 **private는 어떻게 될까?** - 좋은 의문점   
+  * 결과 : 상속을 통한 구현이기 때문에 `private`에 관한 메서드는 프록시로 감싸지지 않음  
+    * 이는 final 도 마찬가지 : 상수로 오버라이딩을 지원하지 않으므로    
+  * 그렇다면 `protected`는? : 아마 될 것 같은데 실험해보자  
+
+## private 메서드를 사용 가능한지 확인해보기  
+**org.woowacourse.aoppractice.service.AuthServiceImpl**
+```java
+package org.woowacourse.aoppractice.service;
+
+import org.springframework.stereotype.Service;
+import org.woowacourse.aoppractice.annotation.PerformanceCheck;
+
+@Service
+public class AuthServiceImpl {
+
+    public void businessLogicMethod(){
+        initMethod();
+        System.out.println("businessLogicMethod process!");
+    }
+
+    @PerformanceCheck
+    private void initMethod(){
+        System.out.println("initMethod process!");
+    }
+
+}
+```
+* 기존 `businessLogicMethod()` 의 `@PerformanceCheck` 어노테이션을 제거
+* `initMethod()` 를 생성하고 `@PerformanceCheck` 어노테이션을 추가  
+  * 단, **`initMethod()`는 private** 접근 제어자를 사용 
+  
+**org.woowacourse.aoppractice.util.UselessAdvisor**  
+```java
+package org.woowacourse.aoppractice.util;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
+
+
+@Aspect
+@Component
+public class UselessAdvisor {
+
+    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
+
+    @Around("@annotation(org.woowacourse.aoppractice.annotation.PerformanceCheck)")
+    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
+        StopWatch stopWatch = new StopWatch();
+        try {
+            stopWatch.start();
+            return joinPoint.proceed();
+        } finally {
+            stopWatch.stop();
+            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
+        }
+    }
+/*
+    @Before("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
+    public void Before() throws Throwable {
+        log.info("이것은 before 어드바이스이다.");
+    }
+
+    @AfterReturning("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
+    public void AfterReturning() throws Throwable {
+        log.info("이것은 AfterReturning 어드바이스이다.");
+    }
+
+    @AfterThrowing("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
+    public void AfterThrowing() throws Throwable {
+        log.info("이것은 AfterThrowing 어드바이스이다.");
+    }
+
+    @After("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
+    public void After() throws Throwable {
+        log.info("이것은 After 어드바이스이다.");
+    }
+*/
+}
+
+```
+* 필자는 여러 어드바이스를 적용시켰기에 불필요한 것들은 주석으로 처리
+* 만약 private 메서드에 AOP가 적용된다면 `request spent {} ms", stopWatch.getLastTaskTimeMillis()` 출력 될 것
+
+**결과**
+```
+initMethod process!
+businessLogicMethod process!
+```
+* private 메서드에는 AOP가 적용되지 않는다.
+
+## 하지만 위 실행 방법으로는 절대 로그가 나올 수 없다!!!!   
+![놀라는 짤](https://user-images.githubusercontent.com/50267433/99340805-14a92180-28cc-11eb-9ac4-bdde9449ed2e.png)    
+    
+|JoinPoint|SpringAOP|AspectJ|
+|---------|---------|-------|
+|메서드 호출|X|O|
+|메서드 실행|O|O|
+|생성자 호출|X|O|  
+|생성자 실행|X|O|
+|Static 초기화 실행|X|O|
+|객체 초기화|X|O|
+|필드 참조|X|O|
+|핸들러 실행|X|O|
+|Advice 실행|X|O|
+
+* 스프링 AOP에서는 메서드 실행에 대해서만 적용되지 호출에 대해서는 적용이 되지 않는다.   
+* 그래서 이를 확인하기 위해서는 AspectJ를 적용해야 할 것 같다.
+
+
+
+# 📘 AOP 용어 
 
 |용어|설명|
 |----|----|
@@ -289,171 +489,6 @@ execution(* com.springbook.biz..*Impl.get*(..))"
 |`(Integer, ..)`|한 개 이상의 매개변수를 가지되, 첫 번째 매개변수의 타입이 integer인 메서드만 허용|
 |`(Integer, *)`|반드시 두 개의 매개변수를 가지되, 첫 번째 매개변수의 타입이 integer인 메서드만 허용|
         
-   
-# 🔍 런타임/프록시 위빙   
-* Proxy를 생성하여 실제 타깃(Target) 오브젝트의 변형없이 위빙을 수행한다.    
-* 실제 런타임 상, Method 호출 시에 위빙이 이루어 지는 방식이다.     
-* 소스파일, 클래스 파일에 대한 변형이 없다는 장점이 있지만, 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다는 단점이 있다.    
-* 또한 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.       
-     
-**org.woowacourse.aoppractice.controller.AopController**     
-```java
-package org.woowacourse.aoppractice.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.woowacourse.aoppractice.service.AuthServiceImpl;
-
-@RestController
-public class AopController {
-    
-    private final AuthServiceImpl authService;
-    
-    public AopController(AuthServiceImpl authService){
-        System.out.println(authService.getClass().getName());
-        this.authService = authService;
-    }
-
-    @GetMapping("/")
-    public void logTest(){
-        authService.businessLogicMethod();
-    }
-
-}
-```
-
-**결과**
-```
-org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d
-```
-
-* 메서드를 감싸는 것이 아닌 Target 클래스를 프록시로 감싸는 것을 알 수 있다.   
-* 물론 AOP를 사용하지 않으면 `org.woowacourse.aoppractice.service.AuthServiceImpl`가 출력된다.   
-* 기존 객체 : AuthServiceImpl      
-* 프록시 객체 : AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
-* CGLIB란? : https://www.youtube.com/watch?v=RHxTV7qFV7M    
-  * 간략히 말하면 클래스 상속을 이용해서 만든 프록시 객체를 의미    
-  * 추후에 정리할 예정        
-    
-<img width="1285" alt="스크린샷 2020-11-17 오전 11 06 34" src="https://user-images.githubusercontent.com/50267433/99337118-0b688680-28c5-11eb-9c99-b0992130f269.png">   
-
-* 기존에는 `AuthController(AopController)` 가 `AuthService`를 의존(참조함)  
-* 프록시 위빙을 적용하면 `AuthService`를 상속받은 `AuthService$$블라블라`를 의존  
-* 상속을 이용한 방식이기에 다형성을 이용하여 하위 클래스인 `AuthService$$블라블라`를 의존 참조할 수 있는 것이다.
-  * `private final AuthServiceImpl authService;`
-  * `public AopController(AuthServiceImpl authService){this.authService = authService;}`
-* `AuthService$$블라블라`는 `AuthService`를 상속받은 클래스인데 **private는 어떻게 될까?** - 좋은 의문점   
-  * 결과 : 상속을 통한 구현이기 때문에 `private`에 관한 메서드는 프록시로 감싸지지 않음  
-    * 이는 final 도 마찬가지 : 상수로 오버라이딩을 지원하지 않으므로    
-  * 그렇다면 `protected`는? : 아마 될 것 같은데 실험해보자  
-
-## private 메서드를 사용 가능한지 확인해보기  
-**org.woowacourse.aoppractice.service.AuthServiceImpl**
-```java
-package org.woowacourse.aoppractice.service;
-
-import org.springframework.stereotype.Service;
-import org.woowacourse.aoppractice.annotation.PerformanceCheck;
-
-@Service
-public class AuthServiceImpl {
-
-    public void businessLogicMethod(){
-        initMethod();
-        System.out.println("businessLogicMethod process!");
-    }
-
-    @PerformanceCheck
-    private void initMethod(){
-        System.out.println("initMethod process!");
-    }
-
-}
-```
-* 기존 `businessLogicMethod()` 의 `@PerformanceCheck` 어노테이션을 제거
-* `initMethod()` 를 생성하고 `@PerformanceCheck` 어노테이션을 추가  
-  * 단, **`initMethod()`는 private** 접근 제어자를 사용 
-  
-**org.woowacourse.aoppractice.util.UselessAdvisor**  
-```java
-package org.woowacourse.aoppractice.util;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
-
-
-@Aspect
-@Component
-public class UselessAdvisor {
-
-    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
-
-    @Around("@annotation(org.woowacourse.aoppractice.annotation.PerformanceCheck)")
-    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        try {
-            stopWatch.start();
-            return joinPoint.proceed();
-        } finally {
-            stopWatch.stop();
-            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
-        }
-    }
-/*
-    @Before("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void Before() throws Throwable {
-        log.info("이것은 before 어드바이스이다.");
-    }
-
-    @AfterReturning("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterReturning() throws Throwable {
-        log.info("이것은 AfterReturning 어드바이스이다.");
-    }
-
-    @AfterThrowing("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterThrowing() throws Throwable {
-        log.info("이것은 AfterThrowing 어드바이스이다.");
-    }
-
-    @After("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void After() throws Throwable {
-        log.info("이것은 After 어드바이스이다.");
-    }
-*/
-}
-
-```
-* 필자는 여러 어드바이스를 적용시켰기에 불필요한 것들은 주석으로 처리
-* 만약 private 메서드에 AOP가 적용된다면 `request spent {} ms", stopWatch.getLastTaskTimeMillis()` 출력 될 것
-
-**결과**
-```
-initMethod process!
-businessLogicMethod process!
-```
-* private 메서드에는 AOP가 적용되지 않는다.
-
-## 하지만 위 실행 방법으로는 절대 로그가 나올 수 없다!!!!   
-![놀라는 짤](https://user-images.githubusercontent.com/50267433/99340805-14a92180-28cc-11eb-9ac4-bdde9449ed2e.png)    
-    
-|JoinPoint|SpringAOP|AspectJ|
-|---------|---------|-------|
-|메서드 호출|X|O|
-|메서드 실행|O|O|
-|생성자 호출|X|O|  
-|생성자 실행|X|O|
-|Static 초기화 실행|X|O|
-|객체 초기화|X|O|
-|필드 참조|X|O|
-|핸들러 실행|X|O|
-|Advice 실행|X|O|
-
-* 스프링 AOP에서는 메서드 실행에 대해서만 적용되지 호출에 대해서는 적용이 되지 않는다.   
-* 그래서 이를 확인하기 위해서는 AspectJ를 적용해야 할 것 같다.
 
 # AspectJ를 이용한 테스트
 
