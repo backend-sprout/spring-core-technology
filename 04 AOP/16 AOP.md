@@ -305,7 +305,35 @@ execution(* com.springbook.biz..*Impl.get*(..))"
 ## 스프링 AOP 개요    
 **프록시 패턴**   
 ```java
+@Primary
+@Service
+public class ProxySimpleEventService implements EventService{
 
+    private final EventService simpleEventService;
+
+    ProxySimpleEventService(EventService simpleEventService) {
+        this.simpleEventService = simpleEventService;
+    }
+
+    @Override
+    public void createEvent() {
+        long begin = System.currentTimeMillis();
+        simpleEventService.createEvent();
+        System.out.println("createEvent 실행시간: "+(System.currentTimeMillis()-begin));
+    }
+
+    @Override
+    public void publishEvent() {
+        long begin = System.currentTimeMillis();
+        simpleEventService.publishEvent();
+        System.out.println("createEvent 실행시간: "+(System.currentTimeMillis()-begin));
+    }
+
+    @Override
+    public void deleteEvent() {
+        simpleEventService.deleteEvent();
+    }
+}
 ```
 
 프록시 패턴은 **AOP에서 기존 코드의 변경 없이 접근 제어 또는 부가 기능 추가하기 위해 사용된다.**              
