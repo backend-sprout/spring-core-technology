@@ -110,20 +110,18 @@ public class Application {
 ```java
 @Service
 public class AuthServiceImpl {
-
-    @PerformanceCheck
     public void businessLogicMethod(){
         System.out.println("businessLogicMethod process!");
     }
 }
 ```
 
-### 일반적인 구현 
+### 📄 일반적인 구현 
       
 ```java
 @Aspect
 @Configuration
-public class UselessAdvisor {
+public class UselessAspect {
 
     Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
 
@@ -152,7 +150,7 @@ public class UselessAdvisor {
 }
 ```
 
-### 어노테이션으로 구현   
+### 📄 어노테이션으로 구현   
 ```java
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
@@ -171,7 +169,7 @@ public class AuthServiceImpl {
 ```java
 @Aspect
 @Component
-public class UselessAdvisor {
+public class UselessAspect {
 
     Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
 
@@ -199,38 +197,27 @@ public class UselessAdvisor {
 
 }
 ```
-* 어노테이션과 Advisor 클래스가 동일 위치면 어노테이션만 적어도 된다.   
-* 하지만 디렉토리가 다르면 패키지를 다 입력해주어야 한다.    
-      
-## 포인트 컷 표현식  
-**execution 예시**    
-```
-<aop:pointcut id="getPointcut" expression="execution(* com.springbook.biz..*Impl.get*(..))" />
-      
-*                       : 리턴 타입 
-com.springbook.biz.     : 패키지 경로 
-*Impl                   : 클래스명 
-get*(..)                : 메소드명 및 매개변수
+* `어노테이션`과 `Aspect`가 동일 위치면 어노테이션만 적어도 된다.   
+* 패키지가 다르면 FQCN(Fully qualified Class Name)을 다 입력해주어야 한다.    
 
-중간 마다 나오는 점은 각 범위를 구분해주는 구분 점이라고 생각하면 된다. 
-```
+## 📖 AOP PointCut 설정  
+### 📄 execution 포인트 컷 리턴
 
-**execution 포인트 컷 리턴타입 지정**
 |표현식|설명| 
 |----|---|   
 |`*`|모든 리턴타입 허용|   
 |`void`|리턴타입이 void인 메서드 선택|   
 |`!void`|리턴타입이 void가 아닌 메서드 선택|   
 
+### 📄 execution 포인트 컷 패키지 
 
-**execution 포인트 컷 패키지 지정**
 |표현식|설명|  
 |----|---|      
 |`com.springbook.biz`|정학하게 해당 패키지만 선택|      
 |`com.springbook.biz..`|해당 패키지 및 모든 하위 패키지 선택|      
 |`com.springbook..impl`|`..`앞 패키지로 시작하면서 마지막 패키지 이름이 `..`로 끝나는 패키지 선택|          
 
-**execution 포인트 컷 클래스 지정**
+### 📄 execution 포인트 컷 클래스
 |표현식|설명|  
 |----|---|      
 |`BoardServiceImpl`|정학하게 해당 클래스만 선택|      
@@ -238,14 +225,16 @@ get*(..)                : 메소드명 및 매개변수
 |`BoardService+`|해당 클래스는 물론 파생된 모든 자식 클래스도 선택 가능|
 |`variable+`|해당 인터페이스를 구현한 모든 클래스 선택 가능 |    
 
-**execution 포인트 컷 메서드 지정**
+### 📄 execution execution 포인트 컷 메서드
+
 |표현식|설명|
 |----|---|
 |`*(..)`|가장 기본 설정으로 모든 메서드 선택|
 |`get*(..)`|메서드 이름이 get으로 시작하는 모든 메서드 선택|
 |`매서드이름(..)`|특정 메서드 이름을 가진 메서드 선택|
 
-**execution 포인트 컷 매개변수 지정**
+### 📄 execution 포인트 컷 매개변수 
+   
 |표현식|설명|
 |----|---|
 |`(..)`|가장 기본 설정으로서 매개변수 타입의 제한이 없음을 의미|
