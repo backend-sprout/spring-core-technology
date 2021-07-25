@@ -95,7 +95,113 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 4. Advice 메소드의 **동작 시점은 5가지로 정할 수 있다.**               
 5. 애스팩트 설정에 따라 **위빙 처리되어 프록시 객체가 생성된다.(동적 프록시 생성)**                 
 6. 프록시 객체를 통해 부가기능이 포함된 비즈니스 로직을 수행한다.              
-          
+
+## AOP 구현 
+```gradle
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+```
+```java
+@EnableAspectJAutoProxy
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) { SpringApplication.run(Application.class,args); }
+}
+```
+```java
+@Service
+public class AuthServiceImpl {
+
+    @PerformanceCheck
+    public void businessLogicMethod(){
+        System.out.println("businessLogicMethod process!");
+    }
+}
+```
+
+### 일반적인 구현 
+      
+```java
+@Aspect
+@Configuration
+public class UselessAdvisor {
+
+    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
+
+    @Around("execution(* me.kwj1270.study.service.AuthServiceImpl.*(..))")
+    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
+        StopWatch stopWatch = new StopWatch();
+        try {
+            stopWatch.start();
+            return joinPoint.proceed();
+        } finally {
+            stopWatch.stop();
+            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
+        }
+    }
+
+    /** 
+     * @Before
+     * @AfterReturning
+     * @AfterThrowing
+     */
+    @After("execution(* me.kwj1270.study.service.AuthServiceImpl.*(..))")
+    public void After() throws Throwable {
+        log.info("After 어드바이스");
+    }
+
+}
+```
+
+### 어노테이션으로 구현   
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.CLASS)
+public @interface PerformanceCheck {
+}
+```
+```java
+@Service
+public class AuthServiceImpl {
+    @PerformanceCheck
+    public void businessLogicMethod(){
+        System.out.println("businessLogicMethod process!");
+    }
+}
+```  
+```java
+@Aspect
+@Component
+public class UselessAdvisor {
+
+    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
+
+    @Around("@annotation(me.kwj1270.study.annotation.PerformanceCheck)")
+    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
+        StopWatch stopWatch = new StopWatch();
+        try {
+            stopWatch.start();
+            return joinPoint.proceed();
+        } finally {
+            stopWatch.stop();
+            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
+        }
+    }
+
+    /** 
+     * @Before
+     * @AfterReturning
+     * @AfterThrowing
+     */
+    @After("execution(* me.kwj1270.study.service.AuthServiceImpl.*(..))")
+    public void After() throws Throwable {
+        log.info("After 어드바이스");
+    }
+
+}
+```
+* 어노테이션과 Advisor 클래스가 동일 위치면 어노테이션만 적어도 된다.   
+* 하지만 디렉토리가 다르면 패키지를 다 입력해주어야 한다.    
+      
 ## 포인트 컷 표현식  
 **execution 예시**    
 ```
@@ -151,151 +257,9 @@ get*(..)                : 메소드명 및 매개변수
         
 # 실제 AOP 작성하기  
 ## 일반적인 구현   
-**build.gradle**
-```gradle
-buildscript {
-    ext{
-        springBootVersion = '2.1.7.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group 'org.example'
-version '1.0-SNAPSHOT'
-sourceCompatibility = 1.8
 
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
 
-dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-aop')
-
-}
-```
-
-**Application**
-```java
-package org.woowacourse.aoppractice;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-
-@EnableAspectJAutoProxy
-@SpringBootApplication
-public class Application {
-    public static void main(String[] args) { SpringApplication.run(Application.class,args); }
-
-}
-```
-
-**AopController**
-```java
-package org.woowacourse.aoppractice.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.woowacourse.aoppractice.service.AuthServiceImpl;
-
-@RestController
-public class AopController {
-    
-    private final AuthServiceImpl authService;
-    
-    public AopController(AuthServiceImpl authService){
-        this.authService = authService;
-    }
-
-    @GetMapping("/")
-    public void logTest(){
-        authService.businessLogicMethod();
-    }
-
-}
-```
- 
-**org.woowacourse.aoppractice.service.AuthServiceImpl**
-```java
-package org.woowacourse.aoppractice.service;
-
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthServiceImpl {
-
-    public void businessLogicMethod(){
-        System.out.println("businessLogicMethod process!");
-    }
-}
-```
-      
-**org.woowacourse.aoppractice.util.UselessAdvisor**
-```java
-package org.woowacourse.aoppractice.util;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StopWatch;
-
-
-@Aspect
-@Configuration
-public class UselessAdvisor {
-
-    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
-
-    @Around("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        try {
-            stopWatch.start();
-            return joinPoint.proceed();
-        } finally {
-            stopWatch.stop();
-            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
-        }
-    }
-
-    @Before("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void Before() throws Throwable {
-        log.info("이것은 before 어드바이스이다.");
-    }
-
-    @AfterReturning("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterReturning() throws Throwable {
-        log.info("이것은 AfterReturning 어드바이스이다.");
-    }
-
-    @AfterThrowing("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterThrowing() throws Throwable {
-        log.info("이것은 AfterThrowing 어드바이스이다.");
-    }
-
-    @After("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void After() throws Throwable {
-        log.info("이것은 After 어드바이스이다.");
-    }
-
-}
-```
 
 **결과**
 ```
@@ -306,102 +270,6 @@ businessLogicMethod process!
 2020-11-16 21:43:00.753  INFO 5986 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 AfterReturning 어드바이스이다.
 ```
 
-## 어노테이션으로 구현
-* build.gradle, Application, AopController 는 기존과 동일합니다.  
-   
-**PerformanceCheck**
-```java
- package org.woowacourse.aoppractice.annotation;
-
-import java.lang.annotation.*;
-
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerformanceCheck {
-
-}
-```
- 
-**org.woowacourse.aoppractice.service.AuthServiceImpl**
-```java
-package org.woowacourse.aoppractice.service;
-
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthServiceImpl {
-
-    @PerformanceCheck
-    public void businessLogicMethod(){
-        System.out.println("businessLogicMethod process!");
-    }
-}
-```
-      
-**org.woowacourse.aoppractice.util.UselessAdvisor**
-```java
-package org.woowacourse.aoppractice.util;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
-
-
-@Aspect
-@Component
-public class UselessAdvisor {
-
-    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
-
-    @Around("@annotation(org.woowacourse.aoppractice.annotation.PerformanceCheck)")
-    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        try {
-            stopWatch.start();
-            return joinPoint.proceed();
-        } finally {
-            stopWatch.stop();
-            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
-        }
-    }
-
-    @Before("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void Before() throws Throwable {
-        log.info("이것은 before 어드바이스이다.");
-    }
-
-    @AfterReturning("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterReturning() throws Throwable {
-        log.info("이것은 AfterReturning 어드바이스이다.");
-    }
-
-    @AfterThrowing("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterThrowing() throws Throwable {
-        log.info("이것은 AfterThrowing 어드바이스이다.");
-    }
-
-    @After("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void After() throws Throwable {
-        log.info("이것은 After 어드바이스이다.");
-    }
-
-}
-```
-* 어노테이션과 Advisor 클래스가 동일 위치면 어노테이션만 적어도 된다.   
-* 하지만 디렉토리가 다르면 `org.woowacourse.aoppractice.annotation.PerformanceCheck` 와 같이 패키지를 다 입력해주어야 한다.    
-* 아래 결과에서 알 수 있듯이 복합해서 사용해도 된다.         
-      
-**결과**      
-```
-2020-11-16 22:03:59.575  INFO 6193 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 before 어드바이스이다.
-businessLogicMethod process!
-2020-11-16 22:03:59.584  INFO 6193 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : request spent 9 ms
-2020-11-16 22:03:59.587  INFO 6193 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 After 어드바이스이다.
-2020-11-16 22:03:59.587  INFO 6193 --- [nio-8080-exec-1] o.w.aoppractice.util.UselessAdvisor      : 이것은 AfterReturning 어드바이스이다.
-```  
 
 # 런타임/프록시 위빙이란?    
 * Proxy를 생성하여 실제 타깃(Target) 오브젝트의 변형없이 위빙을 수행한다.    
