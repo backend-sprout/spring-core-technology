@@ -349,25 +349,25 @@ org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb
       
 <img width="842" alt="aop-proxy" src="https://user-images.githubusercontent.com/50267433/126906051-ec8d6b7c-0f34-44c7-8a8a-51523a4c6a84.png">
 
-프록시 위빙이 가능한 이유는 **상속을 이용한 방식이기에 다형성을 적용시킬 수 있다.** 
-즉, 위 그림에서 `AuthController`가 `AuthService`의 프록시 클래스인 `AuthService$$블라블라`를 참조할 수 있던 것이다.   
-       
-그런데 한가지 생각해볼 점이 있다.         
-**DynamicProxy는 상속/구현을 적용하니 아래와 같은 요소들은 가능할까? 🤔**        
+프록시 위빙이 가능한 이유는 **상속을 이용한 방식이기에 다형성을 적용시킬 수 있다.**    
+즉, 위 그림에서 `AuthController`가 `AuthService`의 프록시 클래스인 `AuthService$$블라블라`를 참조할 수 있던 것이다.      
+            
+그런데 한가지 생각해볼 점이 있다.           
+**DynamicProxy는 상속/구현을 적용하니 아래와 같은 요소들은 가능할까? 🤔**          
+     
+* final 클래스   
+* final 메서드   
+* private 메서드   
    
-* final 클래스 
-* final 메서드 
-* private 메서드 
-
-당연하게도, **자바 문법적으로 상속 및 오버라이딩을 지원하지 못하므로 적용이 되지 않는다.**                 
-이와 비슷하게 Spring에서 지원해주는 `@Trancsactional` 어노테이션이 있는데             
-`@Trancsactional` 어노테이션 또한 AOP기반이기에 private 메서드를 붙이면 작동을 하지 않는다.       
-  
+당연하게도, **자바 문법적으로 상속 및 오버라이딩을 지원하지 못하므로 적용이 되지 않는다.**                   
+이와 비슷하게 Spring에서 지원해주는 `@Trancsactional` 어노테이션이 있는데               
+`@Trancsactional` 어노테이션 또한 AOP기반이기에 private 메서드를 붙이면 작동을 하지 않는다.         
+     
 **@Trancsactional**       
-* 로직 시작시 트랜잭션을 열어줌  
-* 로직 끝날시 commit하고 트랜잭션을 닫아줌     
-* 트랜잭션에 관련된 인프라 로직을 지원하기에 우리는 비즈니스 로직에 집중할 수 있게해준다.                
-          
+* 로직 시작시 트랜잭션을 열어줌    
+* 로직 끝날시 commit하고 트랜잭션을 닫아줌        
+* 트랜잭션에 관련된 인프라 로직을 지원하기에 우리는 비즈니스 로직에 집중할 수 있게해준다.                  
+            
 # 참고            
 [백기선-스프링 프레임워크 핵심 기술](https://www.inflearn.com/course/spring-framework_core)      
 [스프링 퀵 스타트](http://www.yes24.com/Product/Goods/29173715)      
