@@ -74,179 +74,13 @@ AOP는 프로그램 구조에 대한 다른 생각의 방향을 제공해주면�
 **AOP 구현체**    
 * AspectJ : 다양한 포인트 컷 제공       
 * 스프링 AOP : 제한적이지만 효율적인 기능 제공   
-  
-# 📗 스프링 AOP  
-스프링 AOP 는 **런타임 위빙을 지원하기에 Proxy 기반의 AOP 구현 기능을 지원한다.**             
-이러한 **Proxy 기반의 AOP는 스프링 빈에만 적용가능하기에 빈으로 등록된 대상만 AOP 대상이 된다.**         
-또한, **스프링 AOP 특징상 메서드만을 지원할 수 있다.**        
-         
-## 스프링 AOP 개요    
-**프록시 패턴**   
-```java
 
-```
-
-프록시 패턴은 **AOP에서 기존 코드의 변경 없이 접근 제어 또는 부가 기능 추가하기 위해 사용된다.**              
-그러나 일반적인 방법으로 프록시 패턴을 구현하면 아래와 같은 문제점이 발생한다.         
-                
-**문제점**  
-* 매번 Proxy 클래스를 작성해야 한다.    
-* 하나의 클래스가 아닌 여러 클래스를 대상으로 적용하기 힘들다.    
-* 객체 관계가 복잡해지고 관리하기 어렵다.     
-         
-이러한 문제점을 해결하기 위해 등장한 것이 바로 `Spring AOP`와 `Dynamic Proxy`다.  
-**스프링 IoC 컨테이너가 제공하는 기반 시설과 Dynamic Proxy를 사용하여 여러 복잡한 문제 해결했다.**      
-  
-* **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법     
-    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리      
-    * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리    
-* **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**      
-    * 클라이언트 코드 변경이 없다.      
-    * `AbstractAutoProxyCreator implements BeanPostProcessor`를 기반으로 만든다.    
-    * 즉 빈이 생성된 후, 프록시를 생성하는 로직을 수행한다.       
-  
-이렇듯 **런타임시에 동적으로 프록시 빈을 생성하고 AOP를 적용시키는 것을 런타임 위빙이라 부른다.**       
-   
-## 🔍 런타임 위빙(프록시 위빙)      
-런타임 위빙은 **런타임에 동적으로 Proxy를 생성하여 실제 Target 객체의 변형없이 AOP를 수행하는 것을 의미한다.**      
-스프링을 기준으로 말하자면 메서드만이 JoinPoint가 될 수 있기에 Method 호출 시에 위빙이 이루어 지는 방식이다.        
-   
-런타임 위빙 또한, 일반적인 Proxy 패턴을 개선한 Dynamic Proxy를 사용하고 있지만 아래와 같은 문제가 있다.     
-* 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다.            
-* 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.(프록시이기에)                 
-   
-**AOP 프록시 객체**
-```
-org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d
-```
-
-* 기존 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl      
-* 프록시 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
-
-위 코드를 보면, Target 클래스 자체를 프록시로 감싸는 것을 알 수 있다.   
-     
-    
-<img width="1285" alt="스크린샷 2020-11-17 오전 11 06 34" src="https://user-images.githubusercontent.com/50267433/99337118-0b688680-28c5-11eb-9c99-b0992130f269.png">   
-
-* 기존에는 `AuthController(AopController)` 가 `AuthService`를 의존(참조함)  
-* 프록시 위빙을 적용하면 `AuthService`를 상속받은 `AuthService$$블라블라`를 의존  
-* 상속을 이용한 방식이기에 다형성을 이용하여 하위 클래스인 `AuthService$$블라블라`를 의존 참조할 수 있는 것이다.
-  * `private final AuthServiceImpl authService;`
-  * `public AopController(AuthServiceImpl authService){this.authService = authService;}`
-* `AuthService$$블라블라`는 `AuthService`를 상속받은 클래스인데 **private는 어떻게 될까?** - 좋은 의문점   
-  * 결과 : 상속을 통한 구현이기 때문에 `private`에 관한 메서드는 프록시로 감싸지지 않음  
-    * 이는 final 도 마찬가지 : 상수로 오버라이딩을 지원하지 않으므로    
-  * 그렇다면 `protected`는? : 아마 될 것 같은데 실험해보자  
-
-## private 메서드를 사용 가능한지 확인해보기  
-**org.woowacourse.aoppractice.service.AuthServiceImpl**
-```java
-package org.woowacourse.aoppractice.service;
-
-import org.springframework.stereotype.Service;
-import org.woowacourse.aoppractice.annotation.PerformanceCheck;
-
-@Service
-public class AuthServiceImpl {
-
-    public void businessLogicMethod(){
-        initMethod();
-        System.out.println("businessLogicMethod process!");
-    }
-
-    @PerformanceCheck
-    private void initMethod(){
-        System.out.println("initMethod process!");
-    }
-
-}
-```
-* 기존 `businessLogicMethod()` 의 `@PerformanceCheck` 어노테이션을 제거
-* `initMethod()` 를 생성하고 `@PerformanceCheck` 어노테이션을 추가  
-  * 단, **`initMethod()`는 private** 접근 제어자를 사용 
-  
-**org.woowacourse.aoppractice.util.UselessAdvisor**  
-```java
-package org.woowacourse.aoppractice.util;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
-
-
-@Aspect
-@Component
-public class UselessAdvisor {
-
-    Logger log = LoggerFactory.getLogger(UselessAdvisor.class);
-
-    @Around("@annotation(org.woowacourse.aoppractice.annotation.PerformanceCheck)")
-    public Object stopWatch(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        try {
-            stopWatch.start();
-            return joinPoint.proceed();
-        } finally {
-            stopWatch.stop();
-            log.info("request spent {} ms", stopWatch.getLastTaskTimeMillis());
-        }
-    }
-/*
-    @Before("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void Before() throws Throwable {
-        log.info("이것은 before 어드바이스이다.");
-    }
-
-    @AfterReturning("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterReturning() throws Throwable {
-        log.info("이것은 AfterReturning 어드바이스이다.");
-    }
-
-    @AfterThrowing("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void AfterThrowing() throws Throwable {
-        log.info("이것은 AfterThrowing 어드바이스이다.");
-    }
-
-    @After("execution(* org.woowacourse.aoppractice.service.AuthServiceImpl.*(..))")
-    public void After() throws Throwable {
-        log.info("이것은 After 어드바이스이다.");
-    }
-*/
-}
-
-```
-* 필자는 여러 어드바이스를 적용시켰기에 불필요한 것들은 주석으로 처리
-* 만약 private 메서드에 AOP가 적용된다면 `request spent {} ms", stopWatch.getLastTaskTimeMillis()` 출력 될 것
-
-**결과**
-```
-initMethod process!
-businessLogicMethod process!
-```
-* private 메서드에는 AOP가 적용되지 않는다.
-
-## 하지만 위 실행 방법으로는 절대 로그가 나올 수 없다!!!!   
-![놀라는 짤](https://user-images.githubusercontent.com/50267433/99340805-14a92180-28cc-11eb-9ac4-bdde9449ed2e.png)    
-    
-|JoinPoint|SpringAOP|AspectJ|
-|---------|---------|-------|
-|메서드 호출|X|O|
-|메서드 실행|O|O|
-|생성자 호출|X|O|  
-|생성자 실행|X|O|
-|Static 초기화 실행|X|O|
-|객체 초기화|X|O|
-|필드 참조|X|O|
-|핸들러 실행|X|O|
-|Advice 실행|X|O|
-
-* 스프링 AOP에서는 메서드 실행에 대해서만 적용되지 호출에 대해서는 적용이 되지 않는다.   
-* 그래서 이를 확인하기 위해서는 AspectJ를 적용해야 할 것 같다.
-
-
+||SpringAOP|AspectJ|
+|-|---------|-------|
+|목표|간단한 AOP 제공|완벽한 AOP 제공|
+|join point|메서들 레벨만 지원|생성자, 필드, 메서드 등 다양하게 지원|
+|weaving|런타임 시에만 가능|런타임은 제공하지 않음, compile-time, post-compile, load-time 제공|   
+|대상|Spring Container가 관리하는 Bean에만 가능|모든 JAVA Object에 가능|  
 
 # 📘 AOP 용어 
 
@@ -463,42 +297,86 @@ execution(* com.springbook.biz..*Impl.get*(..))"
 |`(Integer, *)`|반드시 두 개의 매개변수를 가지되, 첫 번째 매개변수의 타입이 integer인 메서드만 허용|
         
 
-# AspectJ를 이용한 테스트
+# 📗 스프링 AOP  
+스프링 AOP 는 **런타임 위빙을 지원하기에 Proxy 기반의 AOP 구현 기능을 지원한다.**             
+이러한 **Proxy 기반의 AOP는 스프링 빈에만 적용가능하기에 빈으로 등록된 대상만 AOP 대상이 된다.**         
+또한, **스프링 AOP 특징상 메서드만을 지원할 수 있다.**        
+         
+## 스프링 AOP 개요    
+**프록시 패턴**   
+```java
 
-## 이를 통해 깨달은점  
-### @Trancsactional    
-private 메서드에 `@Trancsactional` 어노테이션을 붙였을 때 작동을 하지 않는다는 말이 있다.   
-이유는 바로, `@Trancsactional` 어노테이션도 스프링 AOP 메서드이기 때문이다.   
+```
 
-* **@Trancsactional :**    
-  * 로직 시작시 트랜잭션을 열어줌
-  * 로직 끝날시 commit하고 트랜잭션을 닫아줌  
-  * 트랜잭션에 관련된 인프라 로직을 지원하기에 우리는 비즈니스 로직에 집중할 수 있게 
+프록시 패턴은 **AOP에서 기존 코드의 변경 없이 접근 제어 또는 부가 기능 추가하기 위해 사용된다.**              
+그러나 일반적인 방법으로 프록시 패턴을 구현하면 아래와 같은 문제점이 발생한다.         
+                
+**문제점**  
+* 매번 Proxy 클래스를 작성해야 한다.    
+* 하나의 클래스가 아닌 여러 클래스를 대상으로 적용하기 힘들다.    
+* 객체 관계가 복잡해지고 관리하기 어렵다.     
+         
+이러한 문제점을 해결하기 위해 등장한 것이 바로 `Spring AOP`와 `Dynamic Proxy`다.  
+**스프링 IoC 컨테이너가 제공하는 기반 시설과 Dynamic Proxy를 사용하여 여러 복잡한 문제 해결했다.**      
+  
+* **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법     
+    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리      
+    * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리    
+* **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**      
+    * 클라이언트 코드 변경이 없다.      
+    * `AbstractAutoProxyCreator implements BeanPostProcessor`를 기반으로 만든다.    
+    * 즉 빈이 생성된 후, 프록시를 생성하는 로직을 수행한다.       
+  
+이렇듯 **런타임시에 동적으로 프록시 빈을 생성하고 AOP를 적용시키는 것을 런타임 위빙이라 부른다.**       
+   
+## 🔍 런타임 위빙(프록시 위빙)      
+런타임 위빙은 **런타임에 동적으로 Proxy를 생성하여 실제 Target 객체의 변형없이 AOP를 수행하는 것을 의미한다.**      
+스프링을 기준으로 말하자면 메서드만이 JoinPoint가 될 수 있기에 Method 호출 시에 위빙이 이루어 지는 방식이다.        
+   
+런타임 위빙 또한, 일반적인 Proxy 패턴을 개선한 Dynamic Proxy를 사용하고 있지만 아래와 같은 문제가 있다.     
+* 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다.            
+* 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.(프록시이기에)                 
+   
+**AOP 프록시 객체**
+```
+org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d
+```
 
-그렇기 때문에 `@Trancsactional` 어노테이션을 적용한 메서드는 private를 적용하지 않는 것이 좋습니다.   
-또한 `@Trancsactional`뿐만 아니라 Interceptor 나 Filter 같은 개념들도 마찬가지입니다.     
+* 기존 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl      
+* 프록시 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
+
+위 코드를 보면, Target 클래스 자체를 프록시로 감싸는 것을 알 수 있다.   
+      
+<img width="842" alt="aop-proxy" src="https://user-images.githubusercontent.com/50267433/126906051-ec8d6b7c-0f34-44c7-8a8a-51523a4c6a84.png">
+
+프록시 위빙이 가능한 이유는 **상속을 이용한 방식이기에 다형성을 적용시킬 수 있다.** 
+즉, 위 그림에서 `AuthController`가 `AuthService`의 프록시 클래스인 `AuthService$$블라블라`를 참조할 수 있던 것이다.   
+       
+그런데 한가지 생각해볼 점이 있다.         
+**DynamicProxy는 상속/구현을 적용하니 아래와 같은 요소들은 가능할까? 🤔**        
+   
+* final 클래스 
+* final 메서드 
+* private 메서드 
+
+당연하게도, **자바 문법적으로 상속 및 오버라이딩을 지원하지 못하므로 적용이 되지 않는다.**                 
+이와 비슷하게 Spring에서 지원해주는 `@Trancsactional` 어노테이션이 있는데             
+`@Trancsactional` 어노테이션 또한 AOP기반이기에 private 메서드를 붙이면 작동을 하지 않는다.       
+  
+**@Trancsactional**       
+* 로직 시작시 트랜잭션을 열어줌  
+* 로직 끝날시 commit하고 트랜잭션을 닫아줌     
+* 트랜잭션에 관련된 인프라 로직을 지원하기에 우리는 비즈니스 로직에 집중할 수 있게해준다.                
+          
+# 참고            
+[백기선-스프링 프레임워크 핵심 기술](https://www.inflearn.com/course/spring-framework_core)      
+[스프링 퀵 스타트](http://www.yes24.com/Product/Goods/29173715)      
+[테코톡-스프링 AOP](https://www.youtube.com/watch?v=Hm0w_9ngDpM)      
+[장인 개발자를 꿈꾸는 : 기록하는 공간](https://devbox.tistory.com/entry/spring-AOP-%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85)           
+[Carrey's 기술블로그](https://jaehun2841.github.io/2018/07/22/2018-07-22-spring-aop4/#joinpoint-%EA%B4%80%EB%A0%A8-annotations)          
+[진짜 개발자](https://galid1.tistory.com/498)       
+[기억보단 기록을](https://jojoldu.tistory.com/69)         
+[리다양의 개발 세상](https://onlyformylittlefox.tistory.com/16)   
+[Carrey's 기술블로그-AspectJ 나중에 참고하면 좋음](https://jaehun2841.github.io/2018/07/22/2018-07-22-spring-aop4/#aspectj%EB%9E%80)    
+[논리적 코딩](https://logical-code.tistory.com/118)             
      
-# Spring AOP vs AspectJ        
-        
-||SpringAOP|AspectJ|
-|-|---------|-------|
-|목표|간단한 AOP 제공|완벽한 AOP 제공|
-|join point|메서들 레벨만 지원|생성자, 필드, 메서드 등 다양하게 지원|
-|weaving|런타임 시에만 가능|런타임은 제공하지 않음, compile-time, post-compile, load-time 제공|   
-|대상|Spring Container가 관리하는 Bean에만 가능|모든 JAVA Object에 가능|  
-        
-        
-# 참고        
-블로그       
-https://devbox.tistory.com/entry/spring-AOP-%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85        
-https://jaehun2841.github.io/2018/07/22/2018-07-22-spring-aop4/#joinpoint-%EA%B4%80%EB%A0%A8-annotations        
-https://galid1.tistory.com/498 - 사용자 지정 어노테이션 만들기      
-https://jojoldu.tistory.com/69 - jojoldu 님의 AOP 시리즈       
-https://onlyformylittlefox.tistory.com/16 - 어노테이션 실행 안되는 이유 (같은 경로 아니면 패키지 다 입력)
-https://jaehun2841.github.io/2018/07/22/2018-07-22-spring-aop4/#aspectj%EB%9E%80 - 위빙 관련 내용  
-https://logical-code.tistory.com/118 - 전체적인 요약본, 가장 좋다.   
-   
-실행 참고 블로그     
-https://medium.com/msolo021015/%EC%8A%A4%ED%94%84%EB%A7%81-%EB%B6%80%ED%8A%B8%EB%A1%9C-aop-%EC%A0%81%EC%9A%A9%ED%95%B4%EB%B3%B4%EA%B8%B0-43022d22d091    
-   
-   
