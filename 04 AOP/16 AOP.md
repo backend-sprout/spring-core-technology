@@ -86,7 +86,15 @@ Aspect는 여러 기능들이 복합적으로 모여 있는 것이 아닌,
 |Weaving|Point cut으로 지정된 요소가 호출될 때 어드바이스 메서드(AOP메서드)가 호출되는 과정을 의미<br>즉, Point cut 으로 지정한 핵심 관심 메서드가 호출될 때, 어드바이스에 해당하는 횡단 관심 메서드가 삽입되는 과정을 의미한다.<br>**Weaving 처리 방식 (AOP 구현 방법)**<br>- 컴파일타임 위빙 : a.java -> a.clss 컴피일 될 때<br>- 로딩타임 위빙 : a.class 를 클래스 로더가 메모리에 로드할 때<br>- 런타임/프록시 위빙 : 타겟 클래스를 부가 기능을 가지는 Proxy로 감싸서 실행(스프링 AOP에서는 IOC/DI를 이용한 방법)<br>-스프링에서는 **런타임 위빙**만을 지원한다.|
 |**Aspect(Advisor)**|Point cut과 Advice의 결합<br>- 어떤 Point cut Element에 대해서 어떤 Advice 메서드를 실행할지 결정한다.<br>- Aspect 설정에 따라 AOP의 동작 방식이 결정되므로 AOP 용어 중 가장 중요한 개념이라 할 수 있다.|
 |proxy|대상 객체에 Advice가 적용된 후 생성된 객체|
-    
+ 
+- Aspect : 흩어진 관심사를 모듈화하여 묶은 것으로 주로 부가기능을 모듈화함
+- Target : Aspect가 가지고있는 Advice 를 적용하는 대상 (클래스, 메서드 .. )
+    - EX) 위 그림에서 Class A, Class B, Class C
+- Advice : 실질적으로 해야할 일들 및 부가 기능을 담은 구현체
+- Joinpoint : Advice가 적용될 위치, 끼어들 수 있는 지점. 메서드 실행, 호출 시점, 생성자 호출 시점, 필드에 접근하기 전, 필드에서 값을 꺼내올 때 등 다양한 시점에 적용이 가능하다
+- Pointcut : 어디에 적용해야 하는지에 대한 정보를 가지고 있다.
+-
+
 ![AOP](https://user-images.githubusercontent.com/50267433/126900960-e0ed4a26-9521-49ac-bfd3-c9a915c12772.png)    
 
 1. 사용자는 시스템을 사용하면서 자연스럽게 비즈니스 컴포넌트의 여러 조인포인트를 호출하게 된다.
