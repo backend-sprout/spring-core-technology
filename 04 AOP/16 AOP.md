@@ -80,7 +80,6 @@ AOP는 프로그램 구조에 대한 다른 생각의 방향을 제공해주면�
 이러한 **Proxy 기반의 AOP는 스프링 빈에만 적용가능하기에 빈으로 등록된 대상만 AOP 대상이 된다.**         
 또한, **스프링 AOP 특징상 메서드만을 지원할 수 있다.**        
          
- 
 ## 스프링 AOP 개요    
 **프록시 패턴**   
 ```java
@@ -98,60 +97,34 @@ AOP는 프로그램 구조에 대한 다른 생각의 방향을 제공해주면�
 이러한 문제점을 해결하기 위해 등장한 것이 바로 `Spring AOP`와 `Dynamic Proxy`다.  
 **스프링 IoC 컨테이너가 제공하는 기반 시설과 Dynamic Proxy를 사용하여 여러 복잡한 문제 해결했다.**      
   
-* **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법
-    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리
-    * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리
-* **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**    
-    * 클라이언트 코드 변경이 없다.   
-    * `AbstractAutoProxyCreator implements BeanPostProcessor`를 기반으로 만든다.  
-    * 즉 빈이 생성된 후, 프록시를 생성하는 로직을 수행한다.     
-
-
+* **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법     
+    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리      
+    * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리    
+* **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**      
+    * 클라이언트 코드 변경이 없다.      
+    * `AbstractAutoProxyCreator implements BeanPostProcessor`를 기반으로 만든다.    
+    * 즉 빈이 생성된 후, 프록시를 생성하는 로직을 수행한다.       
+  
+이렇듯 **런타임시에 동적으로 프록시 빈을 생성하고 AOP를 적용시키는 것을 런타임 위빙이라 부른다.**       
    
-# 🔍 런타임/프록시 위빙   
-* Proxy를 생성하여 실제 타깃(Target) 오브젝트의 변형없이 위빙을 수행한다.    
-* 실제 런타임 상, Method 호출 시에 위빙이 이루어 지는 방식이다.     
-* 소스파일, 클래스 파일에 대한 변형이 없다는 장점이 있지만, 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다는 단점이 있다.    
-* 또한 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.       
-     
-**org.woowacourse.aoppractice.controller.AopController**     
-```java
-package org.woowacourse.aoppractice.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.woowacourse.aoppractice.service.AuthServiceImpl;
-
-@RestController
-public class AopController {
-    
-    private final AuthServiceImpl authService;
-    
-    public AopController(AuthServiceImpl authService){
-        System.out.println(authService.getClass().getName());
-        this.authService = authService;
-    }
-
-    @GetMapping("/")
-    public void logTest(){
-        authService.businessLogicMethod();
-    }
-
-}
-```
-
-**결과**
+## 🔍 런타임 위빙(프록시 위빙)      
+런타임 위빙은 **런타임에 동적으로 Proxy를 생성하여 실제 Target 객체의 변형없이 AOP를 수행하는 것을 의미한다.**      
+스프링을 기준으로 말하자면 메서드만이 JoinPoint가 될 수 있기에 Method 호출 시에 위빙이 이루어 지는 방식이다.        
+   
+런타임 위빙 또한, 일반적인 Proxy 패턴을 개선한 Dynamic Proxy를 사용하고 있지만 아래와 같은 문제가 있다.     
+* 포인트 컷에 대한 어드바이스 적용 갯수가 늘어 날수록 성능이 떨어진다.            
+* 메소드 호출에 대해서만 어드바이스를 적용 할 수 있다.(프록시이기에)                 
+   
+**AOP 프록시 객체**
 ```
 org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d
 ```
 
-* 메서드를 감싸는 것이 아닌 Target 클래스를 프록시로 감싸는 것을 알 수 있다.   
-* 물론 AOP를 사용하지 않으면 `org.woowacourse.aoppractice.service.AuthServiceImpl`가 출력된다.   
-* 기존 객체 : AuthServiceImpl      
-* 프록시 객체 : AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
-* CGLIB란? : https://www.youtube.com/watch?v=RHxTV7qFV7M    
-  * 간략히 말하면 클래스 상속을 이용해서 만든 프록시 객체를 의미    
-  * 추후에 정리할 예정        
+* 기존 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl      
+* 프록시 객체 : org.woowacourse.aoppractice.service.AuthServiceImpl$$EnhancerBySpringCGLIB$$dbdb402d    
+
+위 코드를 보면, Target 클래스 자체를 프록시로 감싸는 것을 알 수 있다.   
+     
     
 <img width="1285" alt="스크린샷 2020-11-17 오전 11 06 34" src="https://user-images.githubusercontent.com/50267433/99337118-0b688680-28c5-11eb-9c99-b0992130f269.png">   
 
