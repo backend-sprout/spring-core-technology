@@ -348,7 +348,7 @@ public class ProxySimpleEventService implements EventService{
 **스프링 IoC 컨테이너가 제공하는 기반 시설과 Dynamic Proxy를 사용하여 여러 복잡한 문제 해결했다.**      
   
 * **Dynamic Proxy :** 동적으로 프록시 객체 생성하는 방법     
-    **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리      
+    * **JDK Dynamic Proxy :** 자바가 제공하는 인터페이스 기반 프록시 생성 라이브러리      
     * **CGlib :** 자바가 제공하는 클래스 기반 프록시 생성 라이브러리    
 * **Spring IoC :** **기존 빈을 대체하는 '동적 프록시 빈'을 만들어 등록한다.**      
     * 클라이언트 코드 변경이 없다.      
